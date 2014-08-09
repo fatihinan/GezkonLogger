@@ -7,23 +7,91 @@ import android.hardware.SensorManager;
 
 public class Ivmeolcer_Kutuphanesi implements SensorEventListener{
 	
+	/**
+	 * x, y ve z yönlerindeki ivme deðerlerinin tutulduðu deðiþkenlerdir.
+	 */
 	double d_ivmeolcer_x;
 	double d_ivmeolcer_y;
 	double d_ivmeolcer_z;
 	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IvmeolcerGetirX </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile x yönendeki ivme deðeri alýnmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI	
+	 * 			d_ivmeolcer_x				double				x yönendeki ivme deðeridir.
+	 * -->
+	 * 
+	*********************************************************************************************/
 	public double IvmeolcerGetirX()
 	{
 		return d_ivmeolcer_x;
 	}
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IvmeolcerGetirY </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile y yönendeki ivme deðeri alýnmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI	
+	 * 			d_ivmeolcer_y				double				y yönendeki ivme deðeridir.
+	 * -->
+	 * 
+	*********************************************************************************************/
 	public double IvmeolcerGetirY()
 	{
 		return d_ivmeolcer_y;
 	}
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IvmeolcerGetirZ </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile z yönendeki ivme deðeri alýnmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI	
+	 * 			d_ivmeolcer_x				double				z yönendeki ivme deðeridir.
+	 * -->
+	 * 
+	*********************************************************************************************/
 	public double IvmeolcerGetirZ()
 	{
 		return d_ivmeolcer_z;
 	}
 	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				Baslat </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile ivmeölçer deðerleri sistemden okunmaya baþlamaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI	
+	 * -->
+	 * 
+	*********************************************************************************************/
 	public void Baslat()
 	{
 		SensorManager sensor_yoneticisi_ivmeolcer = MainActivity.sensor_yoneticisi;
@@ -33,6 +101,22 @@ public class Ivmeolcer_Kutuphanesi implements SensorEventListener{
                 SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				onSensorChanged </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Ývme deðerlerinde bir deðiþiklik olduðunda bu fonksiyon çalýþarak
+	 * güncel ivme deðerleri alýnmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI	
+	 * -->
+	 * 
+	*********************************************************************************************/
 	@Override
 	public void onSensorChanged(SensorEvent sensorEvent) {
 		// TODO Auto-generated method stub
@@ -45,14 +129,22 @@ public class Ivmeolcer_Kutuphanesi implements SensorEventListener{
             }
         }
 	}
-	
-	public String IvmeolcerAl()
-    {
-    	return "X:"+Double.toString(d_ivmeolcer_x) + 
-    			" Y:" + Double.toString(d_ivmeolcer_y) +
-    			" Z:" + Double.toString(d_ivmeolcer_z);
-    }
 
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				onAccuracyChanged </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Ývme hassasiyetinde bir deðiþikli olduðunda bu fonksiyon çalýþmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI	
+	 * -->
+	 * 
+	*********************************************************************************************/
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
