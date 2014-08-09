@@ -1,0 +1,129 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <!-- WiFi Testi -->
+
+    <CheckedTextView
+        android:id="@+id/ctv_wifi_testi"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:text="Wifi Testi" />
+
+    <!-- Bluetooth Testi -->
+
+    <CheckedTextView
+        android:id="@+id/ctv_bluetooth_testi"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:text="Bluetooth Testi" />
+
+    <!-- Manyetik Alan Testi -->
+
+    <CheckedTextView
+        android:id="@+id/ctv_manyetik_alan_testi"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:text="Manyetik Alan Testi" />
+
+    <!-- İvmeölçer Testi -->
+
+    <CheckedTextView
+        android:id="@+id/ctv_ivmeolcer_testi"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:text="İvmeölçer Testi" />
+
+    <!-- Konum bilgilerinin X, Y, Kat olarak girilebileceği arayüz, tek satır olarak ayarlandı. -->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3" >
+
+        <TextView
+            android:id="@+id/tw_x"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="X" />
+
+        <EditText
+            android:id="@+id/et_x"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="center"
+			android:inputType="numberDecimal" />
+
+        <TextView
+            android:id="@+id/tw_y"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="Y"/>
+
+        <EditText
+            android:id="@+id/et_y"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:inputType="numberDecimal" />
+
+        <TextView
+            android:id="@+id/tw_kat"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="Kat" />
+
+        <EditText
+            android:id="@+id/et_kat"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:inputType="numberDecimal"  />
+    </LinearLayout>
+
+    <!-- Log Al butonu eklendi. -->
+
+    <Button
+        android:id="@+id/btn_log_al"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="Log Al" />
+
+</LinearLayout>
