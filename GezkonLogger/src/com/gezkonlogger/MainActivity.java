@@ -93,6 +93,14 @@ public class MainActivity extends Activity {
 	CheckedTextView ctv_bluetooth;
 	CheckedTextView ctv_manyetik_alan;
 	CheckedTextView ctv_ivmeolcer;
+	
+	/**
+	 * Log Al butonuna basýldýðýnda loglanacak ve loglanmayacak parametreleri tutacak olan deðiþkenlerdir.
+	 */
+	boolean b_log_wifi;
+	boolean b_log_bluetooth;
+	boolean b_log_manyetik_alan;
+	boolean b_log_ivmeolcer;
 
 	/**
 	 * EditText ler oluþturuldu.
@@ -202,6 +210,16 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				
+				/**
+				 * Log Al butonuna basýldýðýnda hangi parametrelerin loglanacaðý belirlenmiþtir.
+				 */
+				b_log_wifi = ctv_wifi.isChecked();
+				b_log_bluetooth = ctv_bluetooth.isChecked();
+				b_log_manyetik_alan = ctv_manyetik_alan.isChecked();
+				b_log_ivmeolcer = ctv_ivmeolcer.isChecked();
+				
+				
 				/**
 				 * Log Al butonuna týklandýðýnda excel dosyasýna yazdýrýlmak üzere 
 				 * 
@@ -215,7 +233,6 @@ public class MainActivity extends Activity {
 				  * Her 4 saniyede bir güncel veriler listelere eklenmektedir.
 				  * 
 				  * Toplam 10 test verisi toplandýðýnda onFinish metoduna giderek dosyaya kaydetme iþlemi gerçekleþtirilmektedir.
-				  * 
 				  */
 				 new CountDownTimer(44000, 4000) {
 				
@@ -226,68 +243,128 @@ public class MainActivity extends Activity {
 					 str_tarih = sdf_tarih.format(new Date());
 					 str_saat = sdf_saat.format(new Date());
 					 
-					 /**
-					  * Loglanýyor tostu log iþlemi sonlandýrýlana kadar ekranda gösterilmektedir.
-					  */
-					 Toast.makeText(getApplicationContext(), "Loglanýyor", Toast.LENGTH_SHORT).show();
+					 if(b_log_ivmeolcer)
+					 {
+						 IvmeolcerVeriToplama();
+					 }
+					 if(b_log_manyetik_alan)
+					 {
+						 ManyetikAlanVeriToplama();
+					 }
+					 if(b_log_wifi)
+					 {
+						//wifi_kutuphanesi.WifiTaramaBaslat();
+					 }
+					 if(b_log_bluetooth)
+					 {
+						//BluetoothTara();
+					 }
 					 
-					 /**
-					  * ivmeölçer verileri dosyaya eklenmek üzere listeye eklenmiþtir.
-					  */
-					 String[] ivmeolcer_hucreleri  = new String[10];
-					 ivmeolcer_hucreleri[0] = "ölçüm";
-					 ivmeolcer_hucreleri[1] = str_tarih;
-					 ivmeolcer_hucreleri[2] = str_saat;
-					 ivmeolcer_hucreleri[3] = str_konum_x;
-					 ivmeolcer_hucreleri[4] = str_konum_y;
-					 ivmeolcer_hucreleri[5] = str_kat;
-					 ivmeolcer_hucreleri[6] = String.valueOf(ivmeolcer_kutuphanesi.IvmeolcerGetirX());
-					 ivmeolcer_hucreleri[7] = String.valueOf(ivmeolcer_kutuphanesi.IvmeolcerGetirY());
-					 ivmeolcer_hucreleri[8] = String.valueOf(ivmeolcer_kutuphanesi.IvmeolcerGetirZ());
-					 ivmeolcer_hucreleri[9] = str_pil_seviyesi;
-					 liste_ivmeolcer.add(ivmeolcer_hucreleri);
 					 
-					 /**
-					  * manyetik alan verileri dosyaya eklenmek üzere listeye eklenmiþtir.
-					  */
-					 String[] manyetik_alan_hucreleri  = new String[10];
-					 manyetik_alan_hucreleri[0] = "ölçüm";
-					 manyetik_alan_hucreleri[1] = str_tarih;
-					 manyetik_alan_hucreleri[2] = str_saat;
-					 manyetik_alan_hucreleri[3] = str_konum_x;
-					 manyetik_alan_hucreleri[4] = str_konum_y;
-					 manyetik_alan_hucreleri[5] = str_kat;
-					 manyetik_alan_hucreleri[6] = String.valueOf(manyetik_alan_kutuphanesi.ManyetikAlanGetirX());
-					 manyetik_alan_hucreleri[7] = String.valueOf(manyetik_alan_kutuphanesi.ManyetikAlanGetirY());
-					 manyetik_alan_hucreleri[8] = String.valueOf(manyetik_alan_kutuphanesi.ManyetikAlanGetirZ());
-					 manyetik_alan_hucreleri[9] = str_pil_seviyesi;
-					 liste_manyetik_alan.add(manyetik_alan_hucreleri);
 				     
 				 
-					//wifi_kutuphanesi.WifiTaramaBaslat();
-					//BluetoothTara();
+					
+					
 				 }
 				 public void onFinish() {
 					 /**
 					  * Bir ölçüm sonlandýðýnda toplanan veriler excel dosyasýna yazdýrýlmýþtýr.
 					  */
-					 excel_kutuphanesi.DosyayaYaz("Ivmeolcer", liste_ivmeolcer);
-					 excel_kutuphanesi.DosyayaYaz("ManyetikAlan", liste_manyetik_alan);
+					 if(b_log_ivmeolcer)
+					 {
+						 excel_kutuphanesi.DosyayaYaz("Ivmeolcer", liste_ivmeolcer);
+					 }
+					 if(b_log_manyetik_alan)
+					 {
+						 excel_kutuphanesi.DosyayaYaz("ManyetikAlan", liste_manyetik_alan);
+					 }
+					 if(b_log_wifi)
+					 {
+						 //wifi listesini dosyaya yazdýr
+					 }
+					 if(b_log_bluetooth)
+					 {
+						 //bluetooth listesini dosyaya yazdýr
+					 }
 					 
 					 /**
 					  * Listeler excele kaydedildikten sonra, bir sonraki ölçümelerde kullanýlmak üzere boþaltýlmýþtýr. 
 					  */
 					 liste_ivmeolcer.clear();
 					 liste_manyetik_alan.clear();
-					 
-					 /**
-					  * Ölçüm tamamlandýðýnda tost ile belirtilmiþtir
-					  */
-					 Toast.makeText(getApplicationContext(), "Tamamlandý", Toast.LENGTH_LONG).show();
+
 				 }
 				 }.start();
 			}
 		});
+	}
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IvmeolcerVeriToplama </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile güncel ivmeölçer verileri listeye eklenmektedir. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public void IvmeolcerVeriToplama()
+	{
+		/**
+		  * ivmeölçer verileri dosyaya eklenmek üzere listeye eklenmiþtir.
+		  */
+		 String[] ivmeolcer_hucreleri  = new String[10];
+		 ivmeolcer_hucreleri[0] = "ölçüm";
+		 ivmeolcer_hucreleri[1] = str_tarih;
+		 ivmeolcer_hucreleri[2] = str_saat;
+		 ivmeolcer_hucreleri[3] = str_konum_x;
+		 ivmeolcer_hucreleri[4] = str_konum_y;
+		 ivmeolcer_hucreleri[5] = str_kat;
+		 ivmeolcer_hucreleri[6] = String.valueOf(ivmeolcer_kutuphanesi.IvmeolcerGetirX());
+		 ivmeolcer_hucreleri[7] = String.valueOf(ivmeolcer_kutuphanesi.IvmeolcerGetirY());
+		 ivmeolcer_hucreleri[8] = String.valueOf(ivmeolcer_kutuphanesi.IvmeolcerGetirZ());
+		 ivmeolcer_hucreleri[9] = str_pil_seviyesi;
+		 liste_ivmeolcer.add(ivmeolcer_hucreleri);
+	}
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				ManyetikAlanVeriToplama </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile güncel manyetik alan verileri listeye eklenmektedir. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public void ManyetikAlanVeriToplama()
+	{
+		 /**
+		  * manyetik alan verileri dosyaya eklenmek üzere listeye eklenmiþtir.
+		  */
+		 String[] manyetik_alan_hucreleri  = new String[10];
+		 manyetik_alan_hucreleri[0] = "ölçüm";
+		 manyetik_alan_hucreleri[1] = str_tarih;
+		 manyetik_alan_hucreleri[2] = str_saat;
+		 manyetik_alan_hucreleri[3] = str_konum_x;
+		 manyetik_alan_hucreleri[4] = str_konum_y;
+		 manyetik_alan_hucreleri[5] = str_kat;
+		 manyetik_alan_hucreleri[6] = String.valueOf(manyetik_alan_kutuphanesi.ManyetikAlanGetirX());
+		 manyetik_alan_hucreleri[7] = String.valueOf(manyetik_alan_kutuphanesi.ManyetikAlanGetirY());
+		 manyetik_alan_hucreleri[8] = String.valueOf(manyetik_alan_kutuphanesi.ManyetikAlanGetirZ());
+		 manyetik_alan_hucreleri[9] = str_pil_seviyesi;
+		 liste_manyetik_alan.add(manyetik_alan_hucreleri);
 	}
 	
 	/********************************************************************************************
