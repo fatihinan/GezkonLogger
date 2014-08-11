@@ -15,6 +15,7 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import android.os.Environment;
+import android.widget.Toast;
 
 public class ExcelIslemleri_Kutuphanesi {
 	
@@ -202,10 +203,10 @@ public class ExcelIslemleri_Kutuphanesi {
 		/**
 		 * Excel dosyasýnda ilk yazýlacak satýr 0. satýr olarak ayarlanmýþtýr.
 		 * 
-		 * ilk ölçüm için deðer 1 olarak belirlenmiþtir.
+		 * ilk ölçüm için deðer 0 olarak belirlenmiþtir.
 		 */
 		int i_satir_sayisi = 0;
-		int i_olcum_sayisi = 1;
+		int i_olcum_sayisi = 0;
 		
 		/**
 		 * Loglarý dosyaya yazma sýrasýnda en son hangi satýrda kalýndýðý ve 
@@ -215,11 +216,11 @@ public class ExcelIslemleri_Kutuphanesi {
 		try
 		{
 			Sheet sayfa = excel_dosyasi_acik.getSheet(str_sayfa_ismi);
-			Cell cell_satir_sayisi = sayfa.getCell(10,0); 
+			Cell cell_satir_sayisi = sayfa.getCell(100,0); 
 			String str_satir_sayisi = cell_satir_sayisi.getContents(); 
 			i_satir_sayisi = Integer.parseInt(str_satir_sayisi);
 			
-			Cell cell_olcum_sayisi = sayfa.getCell(11,0); 
+			Cell cell_olcum_sayisi = sayfa.getCell(101,0); 
 			String str_olcum_sayisi = cell_olcum_sayisi.getContents(); 
 			i_olcum_sayisi = Integer.parseInt(str_olcum_sayisi);
 		}
@@ -285,7 +286,7 @@ public class ExcelIslemleri_Kutuphanesi {
 			 * 
 			 * Bir sonraki yazma iþleminde hangi satýrdan devam edileceði excel dosyasýndan okunarak belirlenecektir.
 			 */
-			lbl_hucre = new Label(10, 0, String.valueOf(i_satir_sayisi));
+			lbl_hucre = new Label(100, 0, String.valueOf(i_satir_sayisi));
 			yazdirma_sayfasi.addCell(lbl_hucre);
 			
 			/**
@@ -293,7 +294,7 @@ public class ExcelIslemleri_Kutuphanesi {
 			 * 
 			 * Bir sonraki ölçümün numarasý excel dosyasýndan okunarak belirlenecektir.
 			 */
-			lbl_hucre = new Label(11, 0, String.valueOf(i_olcum_sayisi));
+			lbl_hucre = new Label(101, 0, String.valueOf(i_olcum_sayisi));
 			yazdirma_sayfasi.addCell(lbl_hucre);
 
 			/**

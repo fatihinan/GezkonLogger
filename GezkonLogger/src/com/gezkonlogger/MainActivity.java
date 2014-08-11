@@ -10,6 +10,7 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+	ProgressDialog progressBar;
+	static int progressBarStatus;
 	/**
 	 * Excel dosyasýna kaydedilecek tarih bilgisi için format belirlenmiþtir.
 	 */
@@ -63,6 +66,7 @@ public class MainActivity extends Activity {
 	 */
 	ArrayList<String[]> liste_ivmeolcer = new ArrayList<String[]>();
 	ArrayList<String[]> liste_manyetik_alan = new ArrayList<String[]>();
+	ArrayList<String[]> liste_bluetooth = new ArrayList<String[]>();
 	
 	/**
 	 * Diðer classlarda Toast çalýþtýrmak için gerekli deðiþken oluþturulmuþtur.
@@ -137,6 +141,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		icerik = getApplicationContext();
 		/**
 		 * Pil seviyesinin okunabilmesi için sisteme kayýt yapýlmýþtýr.
 		 */
@@ -153,6 +158,7 @@ public class MainActivity extends Activity {
 		 * Bluetooth sensörlerine ulaþmak için sensör adaptoru oluþturuldu.
 		 */
 		bluetooth_adaptor = BluetoothAdapter.getDefaultAdapter();
+		bluetooth_kutuphanesi.MacAdresleriniAta();
 		
 		/**
 		 * Ýlk olarak log verilerinin yazýlacaðý excel dosyasý açýlmýþ 
@@ -171,7 +177,7 @@ public class MainActivity extends Activity {
 			/**
 			 * Excel sayfalarýnýn ilk satýrlarýnda belirtilen format sayfaya eklendi.
 			 */
-			WiFiFormatEkle();
+			FormatEkle();
 		}
 
 		/**
@@ -210,6 +216,8 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				
+				ProgressBarBaþlat(v);
 				
 				/**
 				 * Log Al butonuna basýldýðýnda hangi parametrelerin loglanacaðý belirlenmiþtir.
@@ -257,16 +265,15 @@ public class MainActivity extends Activity {
 					 }
 					 if(b_log_bluetooth)
 					 {
-						//BluetoothTara();
+						BluetoothTara();
 					 }
 					 
 					 
-				     
-				 
-					
-					
+				     ProgressBarDoldur();
 				 }
 				 public void onFinish() {
+					 
+					 ProgressBarKapat();
 					 /**
 					  * Bir ölçüm sonlandýðýnda toplanan veriler excel dosyasýna yazdýrýlmýþtýr.
 					  */
@@ -284,7 +291,44 @@ public class MainActivity extends Activity {
 					 }
 					 if(b_log_bluetooth)
 					 {
+						   bluetooth_adaptor.cancelDiscovery();
+						   /**
+							  * ivmeölçer verileri dosyaya eklenmek üzere listeye eklenmiþtir.
+							  */
+							 String[] bluetooth_hucreleri  = new String[19];
+							 bluetooth_hucreleri[0] = "ölçüm";
+							 bluetooth_hucreleri[1] = str_tarih;
+							 bluetooth_hucreleri[2] = str_saat;
+							 bluetooth_hucreleri[3] = str_konum_x;
+							 bluetooth_hucreleri[4] = str_konum_y;
+							 bluetooth_hucreleri[5] = str_kat;
+							 bluetooth_hucreleri[6] = "NaN";
+							 bluetooth_hucreleri[7] = "NaN";
+							 bluetooth_hucreleri[8] = "NaN";
+							 bluetooth_hucreleri[9] = "NaN";
+							 bluetooth_hucreleri[10] = "NaN";
+							 bluetooth_hucreleri[11] = "NaN";
+							 bluetooth_hucreleri[12] = "NaN";
+							 bluetooth_hucreleri[13] = "NaN";
+							 bluetooth_hucreleri[14] = "NaN";
+							 bluetooth_hucreleri[15] = "NaN";
+							 bluetooth_hucreleri[16] = "NaN";
+							 bluetooth_hucreleri[17] = "NaN";
+							 for(int i=0; i<Bluetooth_Kutuphanesi.liste_bluetooth_mac_adresleri.size(); i++)
+							 {
+								 for(int j=0; j<Bluetooth_Kutuphanesi.bluetooth_liste.size(); j++)
+								 {
+									 if(Bluetooth_Kutuphanesi.liste_bluetooth_mac_adresleri.get(i).equals(Bluetooth_Kutuphanesi.bluetooth_liste.get(j).AdresGetir()))
+									 {
+										 bluetooth_hucreleri[i+6] = Double.toString(Bluetooth_Kutuphanesi.bluetooth_liste.get(j).RssiGetir());
+									 }
+								 }
+							 }
+							 bluetooth_hucreleri[18] = str_pil_seviyesi;
+							 liste_bluetooth.add(bluetooth_hucreleri);
 						 //bluetooth listesini dosyaya yazdýr
+						 excel_kutuphanesi.DosyayaYaz("Bluetooth", liste_bluetooth);
+
 					 }
 					 
 					 /**
@@ -292,12 +336,81 @@ public class MainActivity extends Activity {
 					  */
 					 liste_ivmeolcer.clear();
 					 liste_manyetik_alan.clear();
+					 liste_bluetooth.clear();
 
 				 }
 				 }.start();
 			}
 		});
 	}
+	
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				BluetoothTara </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon bluetooth cihazlarý tarama iþlemi baþlatýlmaktadýr.  </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public void BluetoothTara() {
+		/**
+		 * Eðer mevcut tarama iþlemi varsa durdurulduktan sonra yeni tarama iþlemi baþlatýlmaktadýr.
+		 */
+		   if (bluetooth_adaptor.isDiscovering()) 
+		   {
+			   bluetooth_adaptor.cancelDiscovery();
+			   /**
+				  * ivmeölçer verileri dosyaya eklenmek üzere listeye eklenmiþtir.
+				  */
+				 String[] bluetooth_hucreleri  = new String[19];
+				 bluetooth_hucreleri[0] = "ölçüm";
+				 bluetooth_hucreleri[1] = str_tarih;
+				 bluetooth_hucreleri[2] = str_saat;
+				 bluetooth_hucreleri[3] = str_konum_x;
+				 bluetooth_hucreleri[4] = str_konum_y;
+				 bluetooth_hucreleri[5] = str_kat;
+				 bluetooth_hucreleri[6] = "NaN";
+				 bluetooth_hucreleri[7] = "NaN";
+				 bluetooth_hucreleri[8] = "NaN";
+				 bluetooth_hucreleri[9] = "NaN";
+				 bluetooth_hucreleri[10] = "NaN";
+				 bluetooth_hucreleri[11] = "NaN";
+				 bluetooth_hucreleri[12] = "NaN";
+				 bluetooth_hucreleri[13] = "NaN";
+				 bluetooth_hucreleri[14] = "NaN";
+				 bluetooth_hucreleri[15] = "NaN";
+				 bluetooth_hucreleri[16] = "NaN";
+				 bluetooth_hucreleri[17] = "NaN";
+				 for(int i=0; i<Bluetooth_Kutuphanesi.liste_bluetooth_mac_adresleri.size(); i++)
+				 {
+					 for(int j=0; j<Bluetooth_Kutuphanesi.bluetooth_liste.size(); j++)
+					 {
+						 if(Bluetooth_Kutuphanesi.liste_bluetooth_mac_adresleri.get(i).equals(Bluetooth_Kutuphanesi.bluetooth_liste.get(j).AdresGetir()))
+						 {
+							 bluetooth_hucreleri[i+6] = Double.toString(Bluetooth_Kutuphanesi.bluetooth_liste.get(j).RssiGetir());
+						 }
+					 }
+				 }
+				 bluetooth_hucreleri[18] = str_pil_seviyesi;
+				 liste_bluetooth.add(bluetooth_hucreleri);
+		   }
+
+		   Bluetooth_Kutuphanesi.bluetooth_liste.clear();
+		   bluetooth_adaptor.startDiscovery();
+		   registerReceiver(Bluetooth_Kutuphanesi.b_alici, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+   
+	   }
+	
+	
+	
 	
 	/********************************************************************************************
 	 * 
@@ -369,6 +482,84 @@ public class MainActivity extends Activity {
 	
 	/********************************************************************************************
 	 * 
+	 * FONKSÝYON ADI: 				ProgressBarBaþlat </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile tarama baþladýðýnda progress bar ekrana çýkmakta ve
+	 * tarama sona erene kadar ekranda kalmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public void ProgressBarBaþlat(View v){
+		
+		// prepare for a progress bar dialog
+		progressBar = new ProgressDialog(v.getContext());
+		progressBar.setCancelable(true);
+		progressBar.setMessage("Loglanýyor ...");
+		progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		progressBar.setProgress(0);
+		progressBar.setMax(100);
+		progressBar.show();
+        progressBar.setCancelable(false);
+		//reset progress bar status
+		progressBarStatus = 0;
+	}
+	
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				ProgressBarDoldur </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile tarama süresinde progress bar'ýn iþlemesi saðlanmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public void ProgressBarDoldur(){
+		
+		progressBarStatus = progressBarStatus + 10;
+	     
+		progressBar.setProgress(progressBarStatus);		 
+			
+	}
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				ProgressBarKapat </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile tarama sbittiðinde progress bar kapatýlmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public void ProgressBarKapat()
+	{
+		if (progressBarStatus >= 100) {
+			progressBar.dismiss();
+			progressBarStatus = 0;
+		}
+	}
+	
+	/********************************************************************************************
+	 * 
 	 * FONKSÝYON ADI: 				batteryInfoReceiver </br> </br>
 	 * FONKSÝYON AÇIKLAMASI: 		Pil durumu bilgisini almak için kullanýlmaktadýr. </br> </br>
 	 *
@@ -398,7 +589,7 @@ public class MainActivity extends Activity {
 	
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				WiFiFormatEkle </br> </br>
+	 * FONKSÝYON ADI: 				FormatEkle </br> </br>
 	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile belirlenen formatlar excel log dosyasýna eklenmektedir.  </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
@@ -411,13 +602,13 @@ public class MainActivity extends Activity {
 	 * -->
 	 * 
 	*********************************************************************************************/
-	private void WiFiFormatEkle()
+	private void FormatEkle()
 	{
 		/**
 		 * Wifi sayfasý için belirlenen format sayfaya eklendi.
 		 */
 		ArrayList<String[]> liste_wifi_format = new ArrayList<String[]>();
-		String[] wifi_format_hucreleri  = new String[12];
+		String[] wifi_format_hucreleri  = new String[102];
 		wifi_format_hucreleri[0] = "ÖLÇÜM";
 		wifi_format_hucreleri[1] = "TARÝH";
 		wifi_format_hucreleri[2] = "ZAMAN";
@@ -428,8 +619,12 @@ public class MainActivity extends Activity {
 		wifi_format_hucreleri[7] = "AP2";
 		wifi_format_hucreleri[8] = "PÝL DURUMU";
 		wifi_format_hucreleri[9] = "";
-		wifi_format_hucreleri[10] = "0";
-		wifi_format_hucreleri[11] = "1";
+		for(int i=10;i<100;i++)
+		{
+			wifi_format_hucreleri[i] = "";
+		}
+		wifi_format_hucreleri[100] = "0";
+		wifi_format_hucreleri[101] = "1";
 	    liste_wifi_format.add(wifi_format_hucreleri);
 	    excel_kutuphanesi.DosyayaYaz("WiFi", liste_wifi_format);
 	    
@@ -437,19 +632,33 @@ public class MainActivity extends Activity {
 		 * Bluetooth sayfasý için belirlenen format sayfaya eklendi.
 		 */
 	    ArrayList<String[]> liste_bluetooth_format = new ArrayList<String[]>();
-		String[] bluetooth_format_hucreleri  = new String[12];
+		String[] bluetooth_format_hucreleri  = new String[102];
 		bluetooth_format_hucreleri[0] = "ÖLÇÜM";
 		bluetooth_format_hucreleri[1] = "TARÝH";
 		bluetooth_format_hucreleri[2] = "ZAMAN";
 		bluetooth_format_hucreleri[3] = "KONUM_X";
 		bluetooth_format_hucreleri[4] = "KONUM_Y";
 		bluetooth_format_hucreleri[5] = "KAT";
-		bluetooth_format_hucreleri[6] = "AP1";
-		bluetooth_format_hucreleri[7] = "AP2";
-		bluetooth_format_hucreleri[8] = "PÝL DURUMU";
-		bluetooth_format_hucreleri[9] = "";
-		bluetooth_format_hucreleri[10] = "0";
-		bluetooth_format_hucreleri[11] = "1";
+		bluetooth_format_hucreleri[6] = "4C:A5:6D:1D:3C:AB";
+		bluetooth_format_hucreleri[7] = "22:22:EB:ED:16:0F";
+		bluetooth_format_hucreleri[8] = "BC:44:86:F2:C0:00";
+		bluetooth_format_hucreleri[9] = "78:A8:73:5A:C6:FF";
+		bluetooth_format_hucreleri[10] = "E0:B9:A5:F6:2B:E6";
+		bluetooth_format_hucreleri[11] = "XX:XX:XX:XX:XX:XX";
+		bluetooth_format_hucreleri[12] = "XX:XX:XX:XX:XX:XX";
+		bluetooth_format_hucreleri[13] = "XX:XX:XX:XX:XX:XX";
+		bluetooth_format_hucreleri[14] = "XX:XX:XX:XX:XX:XX";
+		bluetooth_format_hucreleri[15] = "XX:XX:XX:XX:XX:XX";
+		bluetooth_format_hucreleri[16] = "XX:XX:XX:XX:XX:XX";
+		bluetooth_format_hucreleri[17] = "XX:XX:XX:XX:XX:XX";
+		bluetooth_format_hucreleri[18] = "PÝL DURUMU";
+		bluetooth_format_hucreleri[19] = "";
+		for(int i=20;i<100;i++)
+		{
+			bluetooth_format_hucreleri[i] = "";
+		}
+		bluetooth_format_hucreleri[100] = "0";
+		bluetooth_format_hucreleri[101] = "1";
 		liste_bluetooth_format.add(bluetooth_format_hucreleri);
 	    excel_kutuphanesi.DosyayaYaz("Bluetooth", liste_bluetooth_format);
 	    
@@ -457,7 +666,7 @@ public class MainActivity extends Activity {
 		 * Manyetik Alan sayfasý için belirlenen format sayfaya eklendi.
 		 */
 	    ArrayList<String[]> liste_manyetik_alan_format = new ArrayList<String[]>();
-		String[] manyetik_alan_format_hucreleri  = new String[12];
+		String[] manyetik_alan_format_hucreleri  = new String[102];
 		manyetik_alan_format_hucreleri[0] = "ÖLÇÜM";
 		manyetik_alan_format_hucreleri[1] = "TARÝH";
 		manyetik_alan_format_hucreleri[2] = "ZAMAN";
@@ -468,8 +677,12 @@ public class MainActivity extends Activity {
 		manyetik_alan_format_hucreleri[7] = "Y";
 		manyetik_alan_format_hucreleri[8] = "Z";
 		manyetik_alan_format_hucreleri[9] = "PÝL DURUMU";
-		manyetik_alan_format_hucreleri[10] = "0";
-		manyetik_alan_format_hucreleri[11] = "1";
+		for(int i=10;i<100;i++)
+		{
+			manyetik_alan_format_hucreleri[i] = "";
+		}
+		manyetik_alan_format_hucreleri[100] = "0";
+		manyetik_alan_format_hucreleri[101] = "1";
 		liste_manyetik_alan_format.add(manyetik_alan_format_hucreleri);
 	    excel_kutuphanesi.DosyayaYaz("ManyetikAlan", liste_manyetik_alan_format);
 	    
@@ -477,7 +690,7 @@ public class MainActivity extends Activity {
 		 * Ývmeölçer sayfasý için belirlenen format sayfaya eklendi.
 		 */
 	    ArrayList<String[]> liste_ivmeolcer_format = new ArrayList<String[]>();
-		String[] ivmeolcer_format_hucreleri  = new String[12];
+		String[] ivmeolcer_format_hucreleri  = new String[102];
 		ivmeolcer_format_hucreleri[0] = "ÖLÇÜM";
 		ivmeolcer_format_hucreleri[1] = "TARÝH";
 		ivmeolcer_format_hucreleri[2] = "ZAMAN";
@@ -488,43 +701,18 @@ public class MainActivity extends Activity {
 		ivmeolcer_format_hucreleri[7] = "Y";
 		ivmeolcer_format_hucreleri[8] = "Z";
 		ivmeolcer_format_hucreleri[9] = "PÝL DURUMU";
-		ivmeolcer_format_hucreleri[10] = "0";
-		ivmeolcer_format_hucreleri[11] = "1";
+		for(int i=10;i<100;i++)
+		{
+			ivmeolcer_format_hucreleri[i] = "";
+		}
+		ivmeolcer_format_hucreleri[100] = "0";
+		ivmeolcer_format_hucreleri[101] = "1";
 		liste_ivmeolcer_format.add(ivmeolcer_format_hucreleri);
 	    excel_kutuphanesi.DosyayaYaz("Ivmeolcer", liste_ivmeolcer_format);
 	}
 
 
-	/********************************************************************************************
-	 * 
-	 * FONKSÝYON ADI: 				BluetoothTara </br> </br>
-	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon bluetooth cihazlarý tarama iþlemi baþlatýlmaktadýr.  </br> </br>
-	 *
-	 * ERÝÞÝM: Public </br> </br>
-	 * <!--
-	 * PARAMETRELER:
-	 * 			ADI							TÝPÝ				AÇIKLAMASI
-	 *
-	 * DÖNÜÞ:	
-	 * 			ADI							TÝPÝ				AÇIKLAMASI			
-	 * -->
-	 * 
-	*********************************************************************************************/
-	public void BluetoothTara() {
-		/**
-		 * Eðer mevcut tarama iþlemi varsa durdurulduktan sonra yeni tarama iþlemi baþlatýlmaktadýr.
-		 */
-		   if (bluetooth_adaptor.isDiscovering()) 
-		   {
-			   bluetooth_adaptor.cancelDiscovery();
-		   }
-		   else 
-		   {
-			    Bluetooth_Kutuphanesi.bluetooth_liste.clear();
-				bluetooth_adaptor.startDiscovery();
-				registerReceiver(Bluetooth_Kutuphanesi.b_alici, new IntentFilter(BluetoothDevice.ACTION_FOUND));
-			}    
-	   }
+	
 
 
 	/********************************************************************************************
