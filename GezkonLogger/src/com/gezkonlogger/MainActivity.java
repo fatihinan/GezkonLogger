@@ -3,7 +3,6 @@ package com.gezkonlogger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
@@ -17,7 +16,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckedTextView;
@@ -67,6 +65,7 @@ public class MainActivity extends Activity {
 	ArrayList<String[]> liste_ivmeolcer = new ArrayList<String[]>();
 	ArrayList<String[]> liste_manyetik_alan = new ArrayList<String[]>();
 	ArrayList<String[]> liste_bluetooth = new ArrayList<String[]>();
+	ArrayList<String[]> liste_wifi = new ArrayList<String[]>();
 	
 	/**
 	 * Diðer classlarda Toast çalýþtýrmak için gerekli deðiþken oluþturulmuþtur.
@@ -81,6 +80,7 @@ public class MainActivity extends Activity {
 	/**
 	 * wifi sensörlerine ulaþmak için sensör yöneticisi oluþturuldu.
 	 */
+	final Wifi_Kutuphanesi wifi_kutuphanesi=new Wifi_Kutuphanesi();
 	public static WifiManager wifi_yonetici;
 	
 	/**
@@ -142,6 +142,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		icerik = getApplicationContext();
+		
 		/**
 		 * Pil seviyesinin okunabilmesi için sisteme kayýt yapýlmýþtýr.
 		 */
@@ -151,13 +152,12 @@ public class MainActivity extends Activity {
 		 * WiFi iþlemleri için wifi_yoneticisi nesnesi ve wifi kutuphanesi oluþturulmuþtur.
 		 */
 		wifi_yonetici = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-		final Wifi_Kutuphanesi wifi_kutuphanesi=new Wifi_Kutuphanesi();
-		wifi_yonetici.startScan();
-		
+		wifi_yonetici.setWifiEnabled(false);
 		/**
 		 * Bluetooth sensörlerine ulaþmak için sensör adaptoru oluþturuldu.
 		 */
 		bluetooth_adaptor = BluetoothAdapter.getDefaultAdapter();
+		bluetooth_adaptor.enable();
 		bluetooth_kutuphanesi.MacAdresleriniAta();
 		
 		/**
@@ -179,6 +179,8 @@ public class MainActivity extends Activity {
 			 */
 			FormatEkle();
 		}
+		
+		Wifi_Kutuphanesi.liste_mac_adresleri_toplam = excel_kutuphanesi.KayitliMacAdresleriniAl();
 
 		/**
 		 * Ývmeölçer ve manyetik alan sensörlerine ulaþmak için sensör yöneticisi oluþturuldu.
@@ -209,6 +211,8 @@ public class MainActivity extends Activity {
 		 */
 		btn_log_al = (Button) findViewById(R.id.btn_log_al);
 		
+		
+		 
 		/**
 		 * Log Al butonuna týklandýðýnda gerçekleþtirilecek iþlemler tanýmlanmýþtýr.
 		 */
@@ -242,9 +246,9 @@ public class MainActivity extends Activity {
 				  * 
 				  * Toplam 10 test verisi toplandýðýnda onFinish metoduna giderek dosyaya kaydetme iþlemi gerçekleþtirilmektedir.
 				  */
-				 new CountDownTimer(44000, 4000) {
-				
+				 new CountDownTimer(66000, 6000) {
 				 public void onTick(long millisUntilFinished) {
+				
 					 /**
 					  * Güncel tarih ve saat bilgisi sistemden alýnmaktadýr.
 					  */
@@ -259,15 +263,15 @@ public class MainActivity extends Activity {
 					 {
 						 ManyetikAlanVeriToplama();
 					 }
-					 if(b_log_wifi)
-					 {
-						//wifi_kutuphanesi.WifiTaramaBaslat();
-					 }
+//					 if(b_log_wifi)
+//					 {
+//						WiFiTara();
+//						b_ilk = false;
+//					 }
 					 if(b_log_bluetooth)
 					 {
 						BluetoothTara();
 					 }
-					 
 					 
 				     ProgressBarDoldur();
 				 }
@@ -281,14 +285,68 @@ public class MainActivity extends Activity {
 					 {
 						 excel_kutuphanesi.DosyayaYaz("Ivmeolcer", liste_ivmeolcer);
 					 }
-					 if(b_log_manyetik_alan)
 					 {
 						 excel_kutuphanesi.DosyayaYaz("ManyetikAlan", liste_manyetik_alan);
 					 }
-					 if(b_log_wifi)
-					 {
-						 //wifi listesini dosyaya yazdýr
-					 }
+//					 if(b_log_wifi)
+//					 {
+//						 	/**
+//							 * Wifi sayfasý için belirlenen format sayfaya eklendi.
+//							 */
+//							ArrayList<String[]> liste_wifi_format = new ArrayList<String[]>();
+//							String[] wifi_format_hucreleri  = new String[102];
+//							wifi_format_hucreleri[0] = "ÖLÇÜM";
+//							wifi_format_hucreleri[1] = "TARÝH";
+//							wifi_format_hucreleri[2] = "ZAMAN";
+//							wifi_format_hucreleri[3] = "KONUM_X";
+//							wifi_format_hucreleri[4] = "KONUM_Y";
+//							wifi_format_hucreleri[5] = "KAT";
+//							wifi_format_hucreleri[6] = "PÝL DURUMU";
+//							int i_liste_boyutu = Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size() + 7;
+//							for(int i=7; i<i_liste_boyutu; i++)
+//							{
+//								wifi_format_hucreleri[i] = Wifi_Kutuphanesi.liste_mac_adresleri_toplam.get(i-7);
+//							}
+//							for(int i=7+i_liste_boyutu;i<100;i++)
+//							{
+//								wifi_format_hucreleri[i] = "";
+//							}
+//							wifi_format_hucreleri[100] = "";
+//							wifi_format_hucreleri[101] = "";
+//						    liste_wifi_format.add(wifi_format_hucreleri);
+//						    excel_kutuphanesi.WiFiFormatGuncelle("WiFi", liste_wifi_format);
+//
+//						    String[] wifi_hucreleri  = new String[Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size()+7];
+//						    wifi_hucreleri[0] = "ölçüm";
+//						    wifi_hucreleri[1] = str_tarih;
+//						    wifi_hucreleri[2] = str_saat;
+//						    wifi_hucreleri[3] = str_konum_x;
+//						    wifi_hucreleri[4] = str_konum_y;
+//						    wifi_hucreleri[5] = str_kat;
+//						    wifi_hucreleri[6] = str_pil_seviyesi;
+//						    for(int i=7; i<Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size()+7; i++)
+//						    {
+//						    	wifi_hucreleri[i] = "NaN";
+//						    }
+//	
+//							 for(int i=0; i<Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size(); i++)
+//							 {
+//								 for(int j=0; j<Wifi_Kutuphanesi.cihaz_bilgiler_guncel.size(); j++)
+//								 {
+//									 if(Wifi_Kutuphanesi.liste_mac_adresleri_toplam.get(i).equals(Wifi_Kutuphanesi.cihaz_bilgiler_guncel.get(j).AdresGetir()))
+//									 {
+//										 wifi_hucreleri[i+7] = Double.toString(Wifi_Kutuphanesi.cihaz_bilgiler_guncel.get(j).RssiGetir());
+//									 }
+//								 }
+//							 }
+//							 liste_wifi.add(wifi_hucreleri);
+//							 //wifi listesini dosyaya yazdýr
+//							 excel_kutuphanesi.DosyayaYaz("WiFi", liste_wifi);
+//							 	
+//							 excel_kutuphanesi.WiFiBoslukDoldur();
+//							 
+//						     b_ilk = true;
+//					 }
 					 if(b_log_bluetooth)
 					 {
 						   bluetooth_adaptor.cancelDiscovery();
@@ -337,18 +395,155 @@ public class MainActivity extends Activity {
 					 liste_ivmeolcer.clear();
 					 liste_manyetik_alan.clear();
 					 liste_bluetooth.clear();
+//					 liste_wifi.clear();
+					 
+					 if(b_log_wifi)
+					 {
+						 bluetooth_adaptor.cancelDiscovery();
+						 bluetooth_adaptor.disable();
+						 wifi_yonetici.setWifiEnabled(true);
+						 
+						 new CountDownTimer(4000, 2000) {
+							 public void onTick(long millisUntilFinished) 
+							 {
+									
+							 }
+							 public void onFinish() 
+							 {
+							 } 
+	
+						 }.start();
+					 }
 
-				 }
+						 new CountDownTimer(33000, 3000) {
+							 public void onTick(long millisUntilFinished) 
+							 {
+									WiFiTara();
+									b_ilk = false;
+									Toast.makeText(getApplicationContext(), "a", Toast.LENGTH_SHORT).show();
+							 }
+							 public void onFinish() 
+							 {
+								 	/**
+									 * Wifi sayfasý için belirlenen format sayfaya eklendi.
+									 */
+									ArrayList<String[]> liste_wifi_format = new ArrayList<String[]>();
+									String[] wifi_format_hucreleri  = new String[102];
+									wifi_format_hucreleri[0] = "ÖLÇÜM";
+									wifi_format_hucreleri[1] = "TARÝH";
+									wifi_format_hucreleri[2] = "ZAMAN";
+									wifi_format_hucreleri[3] = "KONUM_X";
+									wifi_format_hucreleri[4] = "KONUM_Y";
+									wifi_format_hucreleri[5] = "KAT";
+									wifi_format_hucreleri[6] = "PÝL DURUMU";
+									int i_liste_boyutu = Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size() + 7;
+									for(int i=7; i<i_liste_boyutu; i++)
+									{
+										wifi_format_hucreleri[i] = Wifi_Kutuphanesi.liste_mac_adresleri_toplam.get(i-7);
+									}
+									for(int i=7+i_liste_boyutu;i<100;i++)
+									{
+										wifi_format_hucreleri[i] = "";
+									}
+									wifi_format_hucreleri[100] = "";
+									wifi_format_hucreleri[101] = "";
+								    liste_wifi_format.add(wifi_format_hucreleri);
+								    excel_kutuphanesi.WiFiFormatGuncelle("WiFi", liste_wifi_format);
+		
+								    String[] wifi_hucreleri  = new String[Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size()+7];
+								    wifi_hucreleri[0] = "ölçüm";
+								    wifi_hucreleri[1] = str_tarih;
+								    wifi_hucreleri[2] = str_saat;
+								    wifi_hucreleri[3] = str_konum_x;
+								    wifi_hucreleri[4] = str_konum_y;
+								    wifi_hucreleri[5] = str_kat;
+								    wifi_hucreleri[6] = str_pil_seviyesi;
+								    for(int i=7; i<Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size()+7; i++)
+								    {
+								    	wifi_hucreleri[i] = "NaN";
+								    }
+	
+									 for(int i=0; i<Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size(); i++)
+									 {
+										 for(int j=0; j<Wifi_Kutuphanesi.cihaz_bilgiler_guncel.size(); j++)
+										 {
+											 if(Wifi_Kutuphanesi.liste_mac_adresleri_toplam.get(i).equals(Wifi_Kutuphanesi.cihaz_bilgiler_guncel.get(j).AdresGetir()))
+											 {
+												 wifi_hucreleri[i+7] = Double.toString(Wifi_Kutuphanesi.cihaz_bilgiler_guncel.get(j).RssiGetir());
+											 }
+										 }
+									 }
+									 liste_wifi.add(wifi_hucreleri);
+									 //wifi listesini dosyaya yazdýr
+									 excel_kutuphanesi.DosyayaYaz("WiFi", liste_wifi);
+									 	
+									 excel_kutuphanesi.WiFiBoslukDoldur();
+									 liste_wifi.clear();
+								     b_ilk = true;
+							 }
+	
+						 }.start();
+				 }		 
 				 }.start();
 			}
 		});
 	}
 	
+	boolean b_ilk = true;
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				WiFiTara </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile WiFi cihazlarý tarama iþlemi baþlatýlmaktadýr.  </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public void WiFiTara()
+	{
+		if(!b_ilk)
+		{
+			String[] wifi_hucreleri  = new String[Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size()+7];
+		    wifi_hucreleri[0] = "ölçüm";
+		    wifi_hucreleri[1] = str_tarih;
+		    wifi_hucreleri[2] = str_saat;
+		    wifi_hucreleri[3] = str_konum_x;
+		    wifi_hucreleri[4] = str_konum_y;
+		    wifi_hucreleri[5] = str_kat;
+		    wifi_hucreleri[6] = str_pil_seviyesi;
+		    for(int i=7; i<Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size()+7; i++)
+		    {
+		    	wifi_hucreleri[i] = "NaN";
+		    }
+
+			 for(int i=0; i<Wifi_Kutuphanesi.liste_mac_adresleri_toplam.size(); i++)
+			 {
+				 for(int j=0; j<Wifi_Kutuphanesi.cihaz_bilgiler_guncel.size(); j++)
+				 {
+					 if(Wifi_Kutuphanesi.liste_mac_adresleri_toplam.get(i).equals(Wifi_Kutuphanesi.cihaz_bilgiler_guncel.get(j).AdresGetir()))
+					 {
+						 wifi_hucreleri[i+7] = Double.toString(Wifi_Kutuphanesi.cihaz_bilgiler_guncel.get(j).RssiGetir());
+					 }
+				 }
+			 }
+			 liste_wifi.add(wifi_hucreleri);
+
+		}
+		Wifi_Kutuphanesi.cihaz_bilgiler_guncel.clear();
+		wifi_kutuphanesi.WifiTaramaBaslat();
+	}
 	
 	/********************************************************************************************
 	 * 
 	 * FONKSÝYON ADI: 				BluetoothTara </br> </br>
-	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon bluetooth cihazlarý tarama iþlemi baþlatýlmaktadýr.  </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile bluetooth cihazlarý tarama iþlemi baþlatýlmaktadýr.  </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
 	 * <!--
@@ -402,7 +597,7 @@ public class MainActivity extends Activity {
 				 bluetooth_hucreleri[18] = str_pil_seviyesi;
 				 liste_bluetooth.add(bluetooth_hucreleri);
 		   }
-
+		   Toast.makeText(getApplicationContext(), String.valueOf(Bluetooth_Kutuphanesi.bluetooth_liste.size()), Toast.LENGTH_LONG).show();
 		   Bluetooth_Kutuphanesi.bluetooth_liste.clear();
 		   bluetooth_adaptor.startDiscovery();
 		   registerReceiver(Bluetooth_Kutuphanesi.b_alici, new IntentFilter(BluetoothDevice.ACTION_FOUND));
@@ -615,11 +810,8 @@ public class MainActivity extends Activity {
 		wifi_format_hucreleri[3] = "KONUM_X";
 		wifi_format_hucreleri[4] = "KONUM_Y";
 		wifi_format_hucreleri[5] = "KAT";
-		wifi_format_hucreleri[6] = "AP1";
-		wifi_format_hucreleri[7] = "AP2";
-		wifi_format_hucreleri[8] = "PÝL DURUMU";
-		wifi_format_hucreleri[9] = "";
-		for(int i=10;i<100;i++)
+		wifi_format_hucreleri[6] = "PÝL DURUMU";
+		for(int i=7;i<100;i++)
 		{
 			wifi_format_hucreleri[i] = "";
 		}

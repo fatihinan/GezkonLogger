@@ -6,8 +6,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.location.GpsStatus.Listener;
-import android.widget.Toast;
 
 public class Bluetooth_Kutuphanesi {
 	 
@@ -16,6 +14,8 @@ public class Bluetooth_Kutuphanesi {
 	//ÞÝRKETÝN MÝNÝ S4 BC:44:86:F2:C0:00
 	//furkanýn tablet 78:A8:73:5A:C6:FF
 	//furkanýn bilgisayar E0:B9:A5:F6:2B:E6
+	//
+	//
 	
 	/**
 	 * Loglanmasý istenilenh bluetooth cihazlarýnýn mac adreslerinin tutan listedir.
@@ -58,6 +58,16 @@ public class Bluetooth_Kutuphanesi {
 		 liste_bluetooth_mac_adresleri.add("BC:44:86:F2:C0:00");
 		 liste_bluetooth_mac_adresleri.add("78:A8:73:5A:C6:FF");
 		 liste_bluetooth_mac_adresleri.add("E0:B9:A5:F6:2B:E6");
+		 //iso
+		 liste_bluetooth_mac_adresleri.add("E6:68:46:5B:DE:5D");
+		 liste_bluetooth_mac_adresleri.add("68:94:23:FC:19:B4");
+		 liste_bluetooth_mac_adresleri.add("5C:AC:4C:D9:DD:3B");
+		 liste_bluetooth_mac_adresleri.add("50:32:75:E1:1F:F9");
+		 liste_bluetooth_mac_adresleri.add("5C:AC:4C:D9:DD:3B");
+		 liste_bluetooth_mac_adresleri.add("E4:92:FB:C4:88:39");
+		 liste_bluetooth_mac_adresleri.add("C4:85:08:02:1B:C3");
+		 
+		 
 	 }
 	 
 	 
