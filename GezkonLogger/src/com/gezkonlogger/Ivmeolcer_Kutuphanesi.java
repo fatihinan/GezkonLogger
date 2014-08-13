@@ -1,3 +1,88 @@
+/*******************************************************************************
+ * ImKAB_AStarKutuphanesi.java
+ *
+ *
+ * AMAÇ:
+ *
+ * ImKAB_AStarKutuphanesi ile navigasyon ekraný içerisinde rota planlama iþlemleri gerçekleþtirilmektedir.
+ * Bu kütüphane ile baþlangýç ve bitiþ düðümleri arasýndaki en kýsa yol A* algoritmasýna göre hesaplanmaktadýr.
+ *
+ * ERÝÞÝM: Public
+ * 
+ * 
+ * GLOBAL DEÐÝÞKENLER:
+ * 
+ * Graph'da bulunan düðüm sayýsýný belirtir.
+ * Düðüm sayýsý kroki dosyasýný atrýþtýran kütüphaneden alýnmýþtýr. 
+ * int i_dugum_sayisi              
+ * 
+ * 
+ * Graph'da bulunan noktalarýn iliþki matrisinin tutulduðu deðiþken oluþturulmuþtur.
+ * Eðer iki düðüm arasýnda iliþki varsa 1, yoksa -1 deðeri atanacaktýr.
+ * int[][] i_komsuluk_matrisi 
+ *       
+ * 
+ * A Star algoritmasýnýn çalýþmasýný saðlayan açýk listedir.
+ * Açýk listede kontrol edilecek düðümler bulunur.
+ * ArrayList<Dugum> acik_liste		
+ * 
+ * 
+ * A Star algoritmasýnýn çalýþmasýný saðlayan kapalý listedir.
+ * Kapalý listede kontrol edilmiþ düðümler bulunur.
+ * ArrayList<Dugum> kapali_liste    
+ * 
+ * 
+ * Aralarýnda baðlantý olan düðümler arasýndaki ayrýt özelliklerinin tutulduðu matris oluþturulmuþtur.
+ * Ayrit[][] ayrit_matrisi          
+ * 
+ * 
+ * Graph'daki düðümlerin tutulacaðý dizidir.
+ * Dugum[] dugumler					
+ * 
+ * 
+ * 
+ * FONKSÝYON PROTOTÝPLERÝ:
+ *
+ *
+ * Bu fonksiyon ile komþu olan düðümler arasýndaki deðerler 1,
+ * komþu olmayan düðümler arasýndaki deðerler -1 olarak atanmýþtýr. 
+ * Krokide bulunan nokta sayýsý kadar Düðüm oluþturulmuþ ve ilk deðerleri atanmýþtýr.
+ * Dosyadan okunan, düðüme ait özellik, x koordinatý ve y koordinatý bilgileri düðümlere atanmýþtýr.
+ * public void Im_DugumVeKomsulukMatrisiOlustur()
+ * 
+ * 
+ * Parametre olarak aldýðý noktalar arasýndaki uzaklýðý hesaplayan fonksiyondur.
+ * public double Im_IkiNoktaArasindakiUzaklik( int Dugum1, int Dugum2)
+ * 
+ * 
+ * Açýk listedeki en küçük d_toplam_maaliyet deðerine sahip düðümü bulup, numarasýný döndüren fonksiyondur.
+ * public int Im_ListedekiEnkucukToplamMaaliyet()
+ * 
+ * 
+ * Bu fonksiyon ile parametre olarak numarasýsý girilen düðümün komþularý açýk listeye eklenmektedir.
+ * public void Im_KomsulariAcikListeyeEkle(int dugum)
+ * 
+ * 
+ * Açýk listedeki düðümlerin toplam maaliyet deðerlerini hesaplayan fonksiyondur.
+ * Burada toplam maaliyet deðeri  toplam maaliyet = mevcut maaliyet + sezgisel maaliyet denklemine göre hesaplanýr.
+ * public void Im_ToplamMaaliyetiGuncelle()
+ * 
+ * 
+ * Bu fonksiyon en kýsa yolu hesaplayan ve yol üzerindeki düðümlerin 
+ * numaralarýný string olarak döndüren fonksiyondur.
+ * public String Im_EnKisaYolBulma(int baslangic, int bitis) 
+ * 
+ * 
+ * 
+ * GELÝÞTÝRME GEÇMÝÞÝ:
+ *
+ * Yazar: Fatih ÝNAN
+ * Tarih: 16.09.2013
+ * Güncelleme Tarihi: 29.11.2013
+ * Versiyon: v3.2
+ *
+ ******************************************************************************/
+
 package com.gezkonlogger;
 
 import android.hardware.Sensor;
