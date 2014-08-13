@@ -1,3 +1,78 @@
+/*******************************************************************************
+ * IM_ExcelIslemleriKutuphanesi.java
+ *
+ * AMAÇ:
+ * IM_ExcelIslemleriKutuphanesi ile excel dosyasý oluþturma,
+ * toplanan test verilerinin excel dosyasýna yazdýrýlmasý ve
+ * excel dosyasýnýn güncellenmesi iþlemlerinin gerçekleþtirilmesi hedeflenmektedir.
+ *
+ *
+ * ERÝÞÝM: Public
+ * 
+ * 
+ * GLOBAL DEÐÝÞKENLER:
+ * 
+ * Log dosyalarýnýn tutulacaðý klasörün ismini tutan deðiþkendir.
+ * String str_klasor_ismi
+ * 
+ * Excel dosyasý üzerinde deðiþiklik yapýlamadýðý için, dosyanýn tüm içeriði öncelikle 
+ * LogDosyasi_temp isimligeçici bir dosyaya aktarýlmakta, deðiþiklikler bu dosya üzerinde yapýlmaktadýr. 
+ * Daha sonra geçici dosya kopyalanarak LogDosyasi ismini almaktadýr ve LogDosyasi_temp dosyasý silinmektedir.
+ * String str_excel_gecici_dosya_ismi
+ * 
+ * Cihaz içerisinde bulunan sdcard'ýn yolunu tutan deðiþkendir.
+ * File sdcard_adres
+ * 
+ * Excel dosyasý içerisinde sayfa oluþturmak için kullanýlacak deðiþkendir.
+ * static WritableSheet excel_sayfasi
+ * 
+ * Yeni excel dosyasý oluþturmak için kullanýlacak deðiþkendir.
+ * static WritableWorkbook excel_dosyasi_yeni
+ * 
+ * 
+ * FONKSÝYON PROTOTÝPLERÝ:
+ *
+ * Bu fonksiyon ile parametre olarak girilen klasörde 
+ * parametre olarak girilen isimde excel dosyasý oluþturulmaktadýr. Dosya oluþturma iþlemi baþarýlý 
+ * bir þekilde gerçekleþtirilirse true, herhangi bir hata oluþursa false deðerini döndürmektedir. 
+ * public boolean IM_ExcelDosyasiOlustur(String str_klasor_ismi, String str_excel_dosya_ismi)
+ *
+ * Bu fonksiyon var olan bir excel dosyasýný okunabilir halde açmakta ve döndürmektedir. 
+ * Parametre olarak dosyanýn bulunduðu klasör ve dosya ismi girilmelidir.
+ * private Workbook IM_ExcelDosyasiAc(String str_klasor_ismi, String str_excel_dosya_ismi)
+ * 
+ * Bu fonksiyon mevcut excel dosyasýnýn sayfa_ismi adlý sayfasýna
+ * liste_veriler ArrayList'indeki verileri yazýlmaktadýr.
+ * public void IM_ExcelDosyasinayaYaz(String str_sayfa_ismi, ArrayList<String[]> liste_veriler)
+ *
+ * Bu fonksiyon ile mevcut excel dosyasýnýn sayfa_ismi adlý sayfasýndaki
+ * format bilgilerini (ilk satýrý) güncellenmektedir.
+ * public void IM_WiFiFormatGuncelle(String str_sayfa_ismi, ArrayList<String[]> liste_veriler)
+ *
+ * Bu fonksiyon ile excel dosyasýnýn WiFi sayfasýnda yeni eklenen bir mac adresinin
+ * bulunduðu sütunda meydana gelen boþ hücrelerin "NaN" olarak doldurulmasý saðlanmaktadýr.
+ * public void IM_WiFiBoslukDoldur()
+ * 
+ * Bu fonksiyon uygulama baþlatýldýðýnda daha önceden bulunmuþ olan 
+ * tüm mac adresleri excel dosyasýndan çekilmektedir.
+ * public List<String> IM_KayitliMacAdresleriniAl()
+ * 
+ * Bu fonksiyon ile mevcut excel dosyasýna str_sayfa_adi isimli sayfa eklenmektedir.
+ * public void IM_ExcelDosyasinaSayfaEkle(String str_sayfa_ismi)
+ * 
+ * Bu fonksiyon ile açýk excel dosyasýnýn kapatýlmasýný saðlamaktadýr.
+ * public void IM_ExcelDosyasiKapat()
+ * 
+ *
+ * GELÝÞTÝRME GEÇMÝÞÝ:
+ *
+ * Yazar: Fatih ÝNAN
+ * Tarih: 09.08.2014
+ * Güncelleme Tarihi: 13.08.2014
+ * Versiyon: v2.0
+ *
+ ******************************************************************************/
+
 package com.gezkonlogger;
 
 import java.io.File;
@@ -24,16 +99,13 @@ public class IM_ExcelIslemleriKutuphanesi {
 	String str_klasor_ismi = "GezkonLogger";
 	
 	/**
-	 * Log verileri öncelikle LogDosyasi_temp isimli dosyaya yüklenmekte
+	 * Excel dosyasý üzerinde deðiþiklik yapýlamadýðý için, dosyanýn tüm içeriði öncelikle 
 	 * 
-	 * dosya kapatýldýkdan sonra LogDosyasi ismini almaktadýr.
+	 * LogDosyasi_temp isimligeçici bir dosyaya aktarýlmakta, deðiþiklikler bu dosya üzerinde yapýlmaktadýr. 
+	 * 
+	 * Daha sonra geçici dosya kopyalanarak LogDosyasi ismini almaktadýr ve LogDosyasi_temp dosyasý silinmektedir.
 	 */
 	String str_excel_gecici_dosya_ismi = "LogDosyasi_temp.xls";
-	
-	/**
-	 * Log verilerini içerecek olan dosyadýr.
-	 */
-	String str_silinecek_excel_dosya_ismi = "LogDosyasi.xls";
 	
 	/**
 	 * Cihaz içerisinde bulunan sdcard'ýn yolunu tutan deðiþkendir.
@@ -46,21 +118,22 @@ public class IM_ExcelIslemleriKutuphanesi {
 	static WritableSheet excel_sayfasi;
 	
 	/**
-	 * Excel dosyasý oluþturmak için kullanýlacak deðiþkendir.
+	 * Yeni excel dosyasý oluþturmak için kullanýlacak deðiþkendir.
 	 */
 	static WritableWorkbook excel_dosyasi_yeni;
 	
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				DosyaOlustur </br> </br>
-	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile istenilen klasörde istenilen isimde 
-	 * excel dosyasý oluþturulmaktadýr.  </br> </br>
+	 * FONKSÝYON ADI: 				IM_ExcelDosyasiOlustur </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile parametre olarak girilen klasörde 
+	 * parametre olarak girilen isimde excel dosyasý oluþturulmaktadýr. Dosya oluþturma iþlemi baþarýlý 
+	 * bir þekilde gerçekleþtirilirse true, herhangi bir hata oluþursa false deðerini döndürmektedir. </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
 	 * <!--
 	 * PARAMETRELER:
 	 * 			ADI							TÝPÝ				AÇIKLAMASI
-	 *			str_klasor_ismi				String				Oluþturulacak dosyanýyý içerek olan klasörün yoludur.
+	 *			str_klasor_ismi				String				Oluþturulacak dosyanýyý içerecek olan klasörün yoludur.
 	 *			str_excel_dosya_ismi		String				Oluþtuulacak dosyanýn ismidir.
 	 *
 	 * DÖNÜÞ:	
@@ -68,10 +141,10 @@ public class IM_ExcelIslemleriKutuphanesi {
 	 * 										boolean				Fonksiyon eðer dosya var ise false, yok ise true dönmektedir.	
 	 * -->
 	 *
-	 *@param str_klasor_ismi Oluþturulacak dosyanýyý içerek olan klasörün yoludur.
-	 *@param str_excel_dosya_ismi Oluþtuulacak dosyanýn ismidir.
+	 *@param str_klasor_ismi Oluþturulacak dosyanýyý içerecek olan klasörün yoludur.
+	 *@param str_excel_dosya_ismi Oluþturulacak dosyanýn ismidir.
 	*********************************************************************************************/
-	public boolean DosyaOlustur(String str_klasor_ismi, String str_excel_dosya_ismi)
+	public boolean IM_ExcelDosyasiOlustur(String str_klasor_ismi, String str_excel_dosya_ismi)
 	{		 
 		/**
 		 * Parametre olarak girilen klasör sdcard içerisinde yoksa oluþturulmuþtur.
@@ -113,8 +186,9 @@ public class IM_ExcelIslemleriKutuphanesi {
 	
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				DosyaAc </br> </br>
-	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon var olan bir excel dosyasý açýlýr.  </br> </br>
+	 * FONKSÝYON ADI: 				IM_ExcelDosyasiAc </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon var olan bir excel dosyasýný okunabilir halde açmakta ve döndürmektedir. 
+	 * Parametre olarak dosyanýn bulunduðu klasör ve dosya ismi girilmelidir.</br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
 	 * <!--
@@ -131,7 +205,7 @@ public class IM_ExcelIslemleriKutuphanesi {
 	 *@param str_klasor_ismi Açýlacak dosyayý içeren klasörün ismidir.
 	 *@param str_excel_dosya_ismi Açýlacak dosyanýn ismidir.
 	*********************************************************************************************/
-	private Workbook DosyaAc(String str_klasor_ismi, String str_excel_dosya_ismi)
+	private Workbook IM_ExcelDosyasiAc(String str_klasor_ismi, String str_excel_dosya_ismi)
 	{
 		/**
 		 * Yeni excel dosyasý oluþturulmuþtur.
@@ -146,7 +220,7 @@ public class IM_ExcelIslemleriKutuphanesi {
 		 File kayit_dosyasi = new File(log_dosyalarý_klasoru, str_excel_dosya_ismi );
 		 
 		 /**
-		  * Excel dosyasý sdcard içerisinde bulunark açýlmýþtýr.
+		  * Excel dosyasý sdcard içerisinde bulunarak açýlmýþtýr.
 		  */
 		 if(kayit_dosyasi.exists())
 		 {
@@ -172,9 +246,9 @@ public class IM_ExcelIslemleriKutuphanesi {
 	
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				DosyayaYaz </br> </br>
+	 * FONKSÝYON ADI: 				IM_ExcelDosyasinayaYaz </br> </br>
 	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon mevcut excel dosyasýnýn sayfa_ismi adlý sayfasýna
-	 * liste_veriler ArrayList'indeki veriler yazýlmaktadýr.  </br> </br>
+	 * liste_veriler ArrayList'indeki verileri yazýlmaktadýr.  </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
 	 * <!--
@@ -192,12 +266,12 @@ public class IM_ExcelIslemleriKutuphanesi {
 	 *@param str_sayfa_ismi Excel dosyasýnýn hangi sayfasýna kayýt yapýlacaðýný belirtir.
 	 *@param liste_veriler Kayýt yapýlacak verilerin tutulduðu listedir.
 	*********************************************************************************************/
-	public void DosyayaYaz(String str_sayfa_ismi, ArrayList<String[]> liste_veriler)
+	public void IM_ExcelDosyasinayaYaz(String str_sayfa_ismi, ArrayList<String[]> liste_veriler)
 	{
 		/**
 		 * Dosyaya yazmak için dosya, DosyaAc fonksiyonu ile açýlmýþtýr. 
 		 */
-		Workbook excel_dosyasi_acik = DosyaAc("GezkonLogger", "LogDosyasi.xls");
+		Workbook excel_dosyasi_acik = IM_ExcelDosyasiAc("GezkonLogger", "LogDosyasi.xls");
 		
 		/**
 		 * Excel dosyasýnda ilk yazýlacak satýr 0. satýr olarak ayarlanmýþtýr.
@@ -234,7 +308,7 @@ public class IM_ExcelIslemleriKutuphanesi {
 		WritableWorkbook excel_dosyasi_yeni = null;
 		File log_dosyalarý_klasoru = new File (sdcard_adres.getAbsolutePath() + "/" + str_klasor_ismi);
 		File kayit_dosyasi = new File(log_dosyalarý_klasoru, str_excel_gecici_dosya_ismi );
-		File silinecek_kayit_dosyasi = new File(log_dosyalarý_klasoru, str_silinecek_excel_dosya_ismi );
+		File silinecek_kayit_dosyasi = new File(log_dosyalarý_klasoru, "LogDosyasi.xls" );
 		
 		try {
 			excel_dosyasi_yeni = Workbook.createWorkbook(kayit_dosyasi, excel_dosyasi_acik);
@@ -329,13 +403,34 @@ public class IM_ExcelIslemleriKutuphanesi {
 	
 	
 	
-	
-	public void WiFiFormatGuncelle(String str_sayfa_ismi, ArrayList<String[]> liste_veriler)
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_WiFiFormatGuncelle </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile mevcut excel dosyasýnýn sayfa_ismi adlý sayfasýndaki
+	 * format bilgilerini (ilk satýrý) güncellenmektedir.  </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *			str_sayfa_ismi				String				Excel dosyasýnýn hangi sayfasýna kayýt yapýlacaðýný belirtir.
+	 *			liste_veriler				ArrayList<String[]>	Güncel format verilerinin tutulduðu listedir.
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * GEREKLÝLÝK: Android Cihazýn SDCard içerisinde bulunan GezkonLogger klasörü ve içerisindeki dosyalarýn
+	 * isimleri deðiþtirilmemeli ve dosyalar silinmemelidir.
+	 *
+	 *@param str_sayfa_ismi Excel dosyasýnýn hangi sayfasýna kayýt yapýlacaðýný belirtir.
+	 *@param liste_veriler Güncel format verilerin tutulduðu listedir.
+	*********************************************************************************************/
+	public void IM_WiFiFormatGuncelle(String str_sayfa_ismi, ArrayList<String[]> liste_veriler)
 	{
 		/**
 		 * Dosyaya yazmak için dosya, DosyaAc fonksiyonu ile açýlmýþtýr. 
 		 */
-		Workbook excel_dosyasi_acik = DosyaAc("GezkonLogger", "LogDosyasi.xls");
+		Workbook excel_dosyasi_acik = IM_ExcelDosyasiAc("GezkonLogger", "LogDosyasi.xls");
 		
 		/**
 		 * Excel dosyasýnda ilk yazýlacak satýr 0. satýr olarak ayarlanmýþtýr.
@@ -372,7 +467,7 @@ public class IM_ExcelIslemleriKutuphanesi {
 		WritableWorkbook excel_dosyasi_yeni = null;
 		File log_dosyalarý_klasoru = new File (sdcard_adres.getAbsolutePath() + "/" + str_klasor_ismi);
 		File kayit_dosyasi = new File(log_dosyalarý_klasoru, str_excel_gecici_dosya_ismi );
-		File silinecek_kayit_dosyasi = new File(log_dosyalarý_klasoru, str_silinecek_excel_dosya_ismi );
+		File silinecek_kayit_dosyasi = new File(log_dosyalarý_klasoru, "LogDosyasi.xls" );
 		
 		try {
 			excel_dosyasi_yeni = Workbook.createWorkbook(kayit_dosyasi, excel_dosyasi_acik);
@@ -446,13 +541,29 @@ public class IM_ExcelIslemleriKutuphanesi {
 	}
 	
 	
-	
-	public void WiFiBoslukDoldur()
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_WiFiBoslukDoldur </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile excel dosyasýnýn WiFi sayfasýnda yeni eklenen bir mac adresinin
+	 * bulunduðu sütunda meydana gelen boþ hücrelerin "NaN" olarak doldurulmasý saðlanmaktadýr.  </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * 
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * GEREKLÝLÝK: Android Cihazýn SDCard içerisinde bulunan GezkonLogger klasörü ve içerisindeki dosyalarýn
+	 * isimleri deðiþtirilmemeli ve dosyalar silinmemelidir.
+	*********************************************************************************************/
+	public void IM_WiFiBoslukDoldur()
 	{
 		/**
 		 * Dosyaya yazmak için dosya, DosyaAc fonksiyonu ile açýlmýþtýr. 
 		 */
-		Workbook excel_dosyasi_acik = DosyaAc("GezkonLogger", "LogDosyasi.xls");
+		Workbook excel_dosyasi_acik = IM_ExcelDosyasiAc("GezkonLogger", "LogDosyasi.xls");
 		
 		/**
 		 * Excel dosyasýnda ilk yazýlacak satýr 0. satýr olarak ayarlanmýþtýr.
@@ -470,7 +581,7 @@ public class IM_ExcelIslemleriKutuphanesi {
 		WritableWorkbook excel_dosyasi_yeni = null;
 		File log_dosyalarý_klasoru = new File (sdcard_adres.getAbsolutePath() + "/" + str_klasor_ismi);
 		File kayit_dosyasi = new File(log_dosyalarý_klasoru, str_excel_gecici_dosya_ismi );
-		File silinecek_kayit_dosyasi = new File(log_dosyalarý_klasoru, str_silinecek_excel_dosya_ismi );
+		File silinecek_kayit_dosyasi = new File(log_dosyalarý_klasoru, "LogDosyasi.xls" );
 		try {
 			excel_dosyasi_yeni = Workbook.createWorkbook(kayit_dosyasi, excel_dosyasi_acik);
 		} catch (IOException e1) {
@@ -485,13 +596,10 @@ public class IM_ExcelIslemleriKutuphanesi {
 		Label lbl_hucre;
 		
 		/**
-		 * Loglarý dosyaya yazma sýrasýnda en son hangi satýrda kalýndýðý ve 
+		 * Loglarý dosyasýna yeni eklenen mac adresinin bulunduðu sütundaki boþ hücreler 
 		 * 
-		 * kaç numaralý ölçümün yapýldýðý log dosyasýndan çekilmektedir.
+		 * belirlenerek "NaN" deðeri ile doldurulmaktadýr.
 		 */
-		//Cell cell_satir_sayisi = sayfa.getCell(100,0); 
-		//String str_satir_sayisi = cell_satir_sayisi.getContents(); 
-		//i_satir_sayisi = Integer.parseInt(str_satir_sayisi);
 		try
 		{
 			while(!(sayfa.getCell(i_sutun_sayisi,0).getContents()).equals(""))
@@ -511,12 +619,10 @@ public class IM_ExcelIslemleriKutuphanesi {
 		{
 		}
 		
-
-		
+		/**
+		 * Yapýlan deðiþiklikler excel dosyasýna kaydedilmiþtir.
+		 */
 		try {
-			/**
-			 * Yapýlan deðiþiklikler excel dosyasýna kaydedilmiþtir.
-			 */
 			excel_dosyasi_yeni.write();
 			excel_dosyasi_yeni.close();
 			excel_dosyasi_acik.close();
@@ -545,18 +651,44 @@ public class IM_ExcelIslemleriKutuphanesi {
 	
 	
 	
-	public List<String> KayitliMacAdresleriniAl()
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_KayitliMacAdresleriniAl </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon uygulama baþlatýldýðýnda daha önceden bulunmuþ olan 
+	 * tüm mac adresleri excel dosyasýndan çekilmektedir. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * 
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI	
+	 * 			liste_kayitli_mac_adresleri List<String>		Excel dosyasýnda bulunan tüm mac adreslerini bulunduran listedir.	
+	 * -->
+	 * GEREKLÝLÝK: Android Cihazýn SDCard içerisinde bulunan GezkonLogger klasörü ve içerisindeki dosyalarýn
+	 * isimleri deðiþtirilmemeli ve dosyalar silinmemelidir.
+	*********************************************************************************************/
+	public List<String> IM_KayitliMacAdresleriniAl()
 	{
 		/**
-		 * Dosyaya yazmak için dosya, DosyaAc fonksiyonu ile açýlmýþtýr. 
+		 * Dosyadan veri okumak için dosya, DosyaAc fonksiyonu ile açýlmýþtýr. 
 		 */
-		Workbook excel_dosyasi_acik = DosyaAc("GezkonLogger", "LogDosyasi.xls");
+		Workbook excel_dosyasi_acik = IM_ExcelDosyasiAc("GezkonLogger", "LogDosyasi.xls");
 		
+		/**
+		 * Verinin okunacaðý sayfa belirlenmiþtir.
+		 */
 		Sheet sayfa = excel_dosyasi_acik.getSheet("WiFi");
-		Cell hucre_mac_adresi;
-		String str_mac_adresi;
+		
+		/**
+		 * Bulunan mac adreslerinin tutulduðu listedir.
+		 */
 		List<String> liste_kayitli_mac_adresleri = new ArrayList<String>();
 		
+		/**
+		 * Tüm mac adreslerinin bulunmasý için ilk mac adresinin yazýlý olduðu 7. sütundan itibaren tarama baþlatýlmýþtýr.
+		 */
 		try
 		{
 			int i_baslangic = 7;
@@ -569,22 +701,24 @@ public class IM_ExcelIslemleriKutuphanesi {
 		catch(Exception e)
 		{
 		}
+		
+		/**
+		 * Bulunan mac adresleri geri döndürülmüþtür.
+		 */
 		return liste_kayitli_mac_adresleri;
-		
-		
 	}
 	
 
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				SayfaEkle </br> </br>
-	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon mevcut excel dosyasýna bir sayfa eklenmektedir.  </br> </br>
+	 * FONKSÝYON ADI: 				IM_ExcelDosyasinaSayfaEkle </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile mevcut excel dosyasýna str_sayfa_ismi isimli sayfa eklenmektedir.  </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
 	 * <!--
 	 * PARAMETRELER:
 	 * 			ADI							TÝPÝ				AÇIKLAMASI
-	 *			str_sayfa_adi				String				Excel dosyasýna eklenecek sayfanýn ismidir.
+	 *			str_sayfa_ismi				String				Excel dosyasýna eklenecek sayfanýn ismidir.
 	 *
 	 * DÖNÜÞ:	
 	 * 			ADI							TÝPÝ				AÇIKLAMASI			
@@ -593,22 +727,22 @@ public class IM_ExcelIslemleriKutuphanesi {
 	 * isimleri deðiþtirilmemeli ve dosyalar silinmemelidir. Bu fonksiyon çalýþtýrýlmadan önce DosyaOlustur
 	 * fonksiyonunu çalýþtýrýlmýþ olmasý gerekmektedir.
 	 *
-	 *@param str_sayfa_adi Excel dosyasýna eklenecek sayfanýn ismidir.
+	 *@param str_sayfa_ismi Excel dosyasýna eklenecek sayfanýn ismidir.
 	*********************************************************************************************/
-	public void SayfaEkle(String str_sayfa_adi)
+	public void IM_ExcelDosyasinaSayfaEkle(String str_sayfa_ismi)
 	{
 		/**
 		 * Excel dosyasýna parametre olarak verilen isimdeki sayfa eklenmiþtir.
 		 */
-		excel_sayfasi = excel_dosyasi_yeni.createSheet(str_sayfa_adi, 0);
+		excel_sayfasi = excel_dosyasi_yeni.createSheet(str_sayfa_ismi, 0);
 	}
 
 	
 	
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				DosyaKapat </br> </br>
-	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon açýk excel dosyasýnýn kapatýlmasýný saðlamaktadýr.  </br> </br>
+	 * FONKSÝYON ADI: 				IM_ExcelDosyasiKapat </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile açýk excel dosyasýnýn kapatýlmasýný saðlamaktadýr.  </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
 	 * <!--
@@ -623,7 +757,7 @@ public class IM_ExcelIslemleriKutuphanesi {
 	 * fonksiyonunu çalýþtýrýlmýþ olmasý gerekmektedir.
 	 * 
 	*********************************************************************************************/
-	public void DosyaKapat()
+	public void IM_ExcelDosyasiKapat()
 	{
 		/**
 		 * Excel dosyasý deðiþiklikler kaydedilerek kapatýlmýþtýr.

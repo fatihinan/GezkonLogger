@@ -32,7 +32,7 @@
  * public double IM_IvmeolcerGetirZ()
  * 
  * Bu fonksiyon ile ivmeölçer deðerleri sistemden okunmaya baþlamaktadýr.
- * public void IM_IvmeolcerToplamaBaslat()
+ * public void IM_IvmeolcerVeriToplamaBaslat()
  * 
  * Ývme deðerlerinde bir deðiþiklik olduðunda bu fonksiyon çalýþarak
  * güncel ivme deðerleri alýnmaktadýr.
@@ -146,7 +146,7 @@ public class IM_IvmeolcerKutuphanesi implements SensorEventListener{
 	 * -->
 	 * 
 	*********************************************************************************************/
-	public void IM_IvmeolcerToplamaBaslat()
+	public void IM_IvmeolcerVeriToplamaBaslat()
 	{
 		SensorManager sensor_yoneticisi_ivmeolcer = IM_AnaUygulama.sensor_yoneticisi;
 		

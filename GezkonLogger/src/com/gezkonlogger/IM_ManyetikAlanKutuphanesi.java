@@ -1,3 +1,55 @@
+/*******************************************************************************
+ * IM_ManyetikAlanKutuphanesi.java
+ *
+ * AMAÇ:
+ * IM_ManyetikAlanKutuphanesi ile x, y ve z yönlerindeki güncel manyetik alan verilerinin alýnmasý hedeflenmektedir.
+ *
+ *
+ * ERÝÞÝM: Public
+ * 
+ * 
+ * GLOBAL DEÐÝÞKENLER:
+ * 
+ * x yönündeki güncel manyetik alan deðerlerinin tutulduðu deðiþkenlerdir.
+ * double d_manyetik_alan_x             
+ * 
+ * y yönündeki güncel manyetik alan deðerlerinin tutulduðu deðiþkenlerdir.
+ * double d_manyetik_alan_y
+ * 
+ * z yönündeki güncel manyetik alan deðerlerinin tutulduðu deðiþkenlerdir.
+ * double d_manyetik_alan_z
+ * 
+ * 
+ * FONKSÝYON PROTOTÝPLERÝ:
+ *
+ * Bu fonksiyon ile x yönündeki güncel manyetik alan deðeri alýnmaktadýr.
+ * public double IM_ManyetikAlanGetirX()
+ * 
+ * Bu fonksiyon ile y yönündeki güncel manyetik alan deðeri alýnmaktadýr.
+ * public double IM_ManyetikAlanGetirY()
+ * 
+ * Bu fonksiyon ile z yönündeki güncel manyetik alan deðeri alýnmaktadýr.
+ * public double IM_ManyetikAlanGetirZ()
+ * 
+ * Bu fonksiyon ile manyetik alan deðerleri sistemden okunmaya baþlamaktadýr.
+ * public void IM_ManyetikAlanVeriToplamaBaslat()
+ * 
+ * Manyetik alan deðerlerinde bir deðiþiklik olduðunda bu fonksiyon çalýþarak
+ * güncel manyetik alan deðerleri alýnmaktadýr.
+ * public void onSensorChanged
+ * 
+ * Manyetik alan hassasiyetinde bir deðiþikli olduðunda bu fonksiyon çalýþmaktadýr.
+ * public void onAccuracyChanged
+ * 
+ * GELÝÞTÝRME GEÇMÝÞÝ:
+ *
+ * Yazar: Fatih ÝNAN
+ * Tarih: 09.08.2014
+ * Güncelleme Tarihi: 13.08.2014
+ * Versiyon: v1.1
+ *
+ ******************************************************************************/
+
 package com.gezkonlogger;
 
 import android.hardware.Sensor;
@@ -16,8 +68,8 @@ public class IM_ManyetikAlanKutuphanesi implements SensorEventListener {
 
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				ManyetikAlanGetirX </br> </br>
-	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile x yönendeki manyetik alan deðeri alýnmaktadýr. </br> </br>
+	 * FONKSÝYON ADI: 				IM_ManyetikAlanGetirX </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile x yönündeki güncel manyetik alan deðeri alýnmaktadýr. </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
 	 * <!--
@@ -30,15 +82,15 @@ public class IM_ManyetikAlanKutuphanesi implements SensorEventListener {
 	 * -->
 	 * 
 	*********************************************************************************************/
-	public double ManyetikAlanGetirX()
+	public double IM_ManyetikAlanGetirX()
 	{
 		return d_manyetik_alan_x;
 	}
 	
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				ManyetikAlanGetirY </br> </br>
-	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile y yönendeki manyetik alan deðeri alýnmaktadýr. </br> </br>
+	 * FONKSÝYON ADI: 				IM_ManyetikAlanGetirY </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile y yönündeki güncel manyetik alan deðeri alýnmaktadýr. </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
 	 * <!--
@@ -51,15 +103,15 @@ public class IM_ManyetikAlanKutuphanesi implements SensorEventListener {
 	 * -->
 	 * 
 	*********************************************************************************************/
-	public double ManyetikAlanGetirY()
+	public double IM_ManyetikAlanGetirY()
 	{
 		return d_manyetik_alan_y;
 	}
 	
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				ManyetikAlanGetirZ </br> </br>
-	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile z yönendeki manyetik alan deðeri alýnmaktadýr. </br> </br>
+	 * FONKSÝYON ADI: 				IM_ManyetikAlanGetirZ </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile z yönündeki güncel manyetik alan deðeri alýnmaktadýr. </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
 	 * <!--
@@ -72,14 +124,15 @@ public class IM_ManyetikAlanKutuphanesi implements SensorEventListener {
 	 * -->
 	 * 
 	*********************************************************************************************/
-	public double ManyetikAlanGetirZ()
+	public double IM_ManyetikAlanGetirZ()
 	{
 		return d_manyetik_alan_z;
 	}
 	
+	
 	/********************************************************************************************
 	 * 
-	 * FONKSÝYON ADI: 				Baslat </br> </br>
+	 * FONKSÝYON ADI: 				IM_ManyetikAlanVeriToplamaBaslat </br> </br>
 	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile manyetik alan deðerleri sistemden okunmaya baþlamaktadýr. </br> </br>
 	 *
 	 * ERÝÞÝM: Public </br> </br>
@@ -92,11 +145,10 @@ public class IM_ManyetikAlanKutuphanesi implements SensorEventListener {
 	 * -->
 	 * 
 	*********************************************************************************************/
-    public void Baslat() 
+    public void IM_ManyetikAlanVeriToplamaBaslat() 
     {
     	SensorManager sensor_yoneticisi_manyetik_alan = IM_AnaUygulama.sensor_yoneticisi;
 
-        // Register magnetic sensor
     	sensor_yoneticisi_manyetik_alan.registerListener(this,
     			sensor_yoneticisi_manyetik_alan.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL);

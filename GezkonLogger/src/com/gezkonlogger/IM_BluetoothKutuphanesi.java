@@ -1,3 +1,52 @@
+/*******************************************************************************
+ * IM_BluetoothKutuphanesi.java
+ *
+ *
+ * AMAÇ:
+ *
+ * IM_BluetoothKutuphanesi ile bilinen 12 bluetooth aygýtý mac adreslerine göre bulunmakta 
+ * ve özellikleri listelere eklenmektedir.
+ *
+ * ERÝÞÝM: Public
+ * 
+ * 
+ * GLOBAL DEÐÝÞKENLER:
+ * 
+ * Loglanmasý istenilenh bluetooth cihazlarýnýn mac adreslerinin tutan listedir.
+ * List<String> liste_bluetooth_mac_adresleri = new ArrayList<String>();            
+ * 
+ * 
+ * Bir ölçüm boyunca Bluetooth bilgilerinin tutulacaðý listelerdir.
+ * Ölçüm tamamlandýðýnda veriler bu listelerden çekilerek excel dosyasýna yazdýrýlmaktadýr.
+ * List<Cihaz_Kutuphanesi> bluetooth_liste=new ArrayList<Cihaz_Kutuphanesi>();
+ *       
+ * 
+ * Bulunan bluetooth cihazýnýn rssi deðerinin tutulduðu deðiþkendir.
+ * float f_rssi;	
+ * 
+ * 
+ * 
+ * FONKSÝYON PROTOTÝPLERÝ:
+ *
+ *
+ * Bu fonksiyon ile belirlenen mac adresleri listeye eklenerek loglama sýrasýnda kullanýlmak üzere kaydedilmektedir.
+ * public void MacAdresleriniAta()
+ * 
+ * 
+ * Bu fonksiyon ile bluetooth taramasý yapýlmakta ve tarama sonuçlarý listeye eklenmektedir.
+ * final static BroadcastReceiver b_alici = new BroadcastReceiver() 
+ * 
+ * 
+ * 
+ * GELÝÞTÝRME GEÇMÝÞÝ:
+ *
+ * Yazar: Furkan GÜNER
+ * Tarih: 11.08.2014
+ * Güncelleme Tarihi: 13.08.2014
+ * Versiyon: v1.1
+ *
+ ******************************************************************************/
+
 package com.gezkonlogger;
 
 import java.util.ArrayList;
@@ -14,8 +63,7 @@ public class IM_BluetoothKutuphanesi {
 	//ÞÝRKETÝN MÝNÝ S4 BC:44:86:F2:C0:00
 	//furkanýn tablet 78:A8:73:5A:C6:FF
 	//furkanýn bilgisayar E0:B9:A5:F6:2B:E6
-	//
-	//
+	
 	
 	/**
 	 * Loglanmasý istenilenh bluetooth cihazlarýnýn mac adreslerinin tutan listedir.
@@ -27,7 +75,7 @@ public class IM_BluetoothKutuphanesi {
 	 * 
 	 * Ölçüm tamamlandýðýnda veriler bu listelerden çekilerek excel dosyasýna yazdýrýlmaktadýr.
 	 */
-	 static List<IM_CihazBilgileriKutuphanesi> bluetooth_liste=new ArrayList<IM_CihazBilgileriKutuphanesi>();
+	 static List<IM_CihazBilgileriKutuphanesi> liste_bluetooth=new ArrayList<IM_CihazBilgileriKutuphanesi>();
 	 
 	 /**
 	  * Bulunan bluetooth cihazýnýn rssi deðerinin tutulduðu deðiþkendir.
@@ -37,7 +85,7 @@ public class IM_BluetoothKutuphanesi {
 	 
 	 	/********************************************************************************************
 		 * 
-		 * FONKSÝYON ADI: 				MacAdresleriniAta </br> </br>
+		 * FONKSÝYON ADI: 				IM_MacAdresleriniAta </br> </br>
 		 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile belirlenen mac adresleri listeye eklenerek
 		 * loglama sýrasýnda kullanýlmak üzere kaydedilmektedir. </br> </br>
 		 * <!--
@@ -51,7 +99,7 @@ public class IM_BluetoothKutuphanesi {
 		 * GEREKLÝLÝK: Bluetooth'un açýk olmasý gerekmektedir.
 		 *
 		*********************************************************************************************/
-	 public void MacAdresleriniAta()
+	 public void IM_MacAdresleriniAta()
 	 {
 		 liste_bluetooth_mac_adresleri.add("4C:A5:6D:1D:3C:AB");
 		 liste_bluetooth_mac_adresleri.add("22:22:EB:ED:16:0F");
@@ -75,7 +123,7 @@ public class IM_BluetoothKutuphanesi {
 		/********************************************************************************************
 		 * 
 		 * FONKSÝYON ADI: 				BroadcastReceiver </br> </br>
-		 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile bluetooth taramasý yapýlmakta ve tarama sonuçlarý listeye yüklenmektedir. </br> </br>
+		 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile bluetooth taramasý yapýlmakta ve tarama sonuçlarý listeye eklenmektedir. </br> </br>
 		 * <!--
 		 * ERÝÞÝM: Public </br> </br>
 		 * <!--
@@ -84,22 +132,28 @@ public class IM_BluetoothKutuphanesi {
 		 * DÖNÜÞ:	
 	     * 				ADI							TÝPÝ				AÇIKLAMASI			
 	     * -->
-		 * GEREKLÝLÝK: Bluetooth'un açýk olmasý gerekmektedir.
+		 * GEREKLÝLÝK: 
 		 *
 		*********************************************************************************************/
 	  final static BroadcastReceiver b_alici = new BroadcastReceiver() {
 		    public void onReceive(Context context, Intent intent) {
-		        String str_olay = intent.getAction();
+		    	/**
+		   	     * Yeni bluetooth bulunduðunda gelen action stringdir.
+		   	     */
+		    	String str_durum = intent.getAction();
 		        // When discovery finds a device
-		        if (BluetoothDevice.ACTION_FOUND.equals(str_olay)) {
-		             // Get the BluetoothDevice object from the Intent
+		        if (BluetoothDevice.ACTION_FOUND.equals(str_durum)) {
+		             
+		        	/**
+			   	     * Bulunan bluetooth cihazýdýr.
+			   	     */
 		        	 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 		        	 
 		        	 f_rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
 		        	 
 		        	 if(liste_bluetooth_mac_adresleri.contains(device.getAddress()))
 		        	 {
-		        		 bluetooth_liste.add(new IM_CihazBilgileriKutuphanesi(device.getAddress(),f_rssi,device.getName()));
+		        		 liste_bluetooth.add(new IM_CihazBilgileriKutuphanesi(device.getAddress(),f_rssi,device.getName()));
 		        	 }
 		        	
 		        }
