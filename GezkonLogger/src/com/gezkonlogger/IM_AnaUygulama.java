@@ -264,7 +264,7 @@ public class IM_AnaUygulama extends Activity {
 	/**
 	 * Excel dosyasýna kaydedilecek saat bilgisi için belirlenen formattýr.
 	 */
-	SimpleDateFormat sdf_saat = new SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault());
+	SimpleDateFormat sdf_saat = new SimpleDateFormat("HH:mm:ss.SSS", java.util.Locale.getDefault());
 	
 	/**
 	 * Güncel saat deðerinin tutulduðu deðiþkendir.
