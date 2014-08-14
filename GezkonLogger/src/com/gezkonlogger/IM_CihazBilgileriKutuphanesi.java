@@ -14,42 +14,32 @@
  * Cihaz rssi deðerinin tutulacaðý deðiþkendir.
  * float f_rssi;           
  * 
- * 
  * Cihaz açýk isminin tutulacaðý deðiþkendir.
  * String str_ssid;
  *       
- * 
  * Cihaz mac  adresinin tutulacaðý deðiþkendir.
  * String str_adres;
  * 
  * 
- * 
  * FONKSÝYON PROTOTÝPLERÝ:
- *
  *
  * Bu fonksiyon ile cihaz bilgileri alýnmaktadýr.
  * public IM_Cihaz_Kutuphanesi(String str_adres, float f_rssi, String str_ssid)
  * 
- * 
  * Bu fonksiyon ile cihazýn rssi deðeri alýnmaktadýr.
  * public float IM_RssiGetir() 
- * 
  * 
  * Bu fonksiyon ile cihazýn rssi deðeri kaydedilmektedir.
  * public void IM_RssiKaydet(float f_rssi)
  * 
- * 
  * Bu fonksiyon ile cihazýn mac adresi alýnmaktadýr.
  * public String IM_AdresGetir()
- * 
- * 
+ *
  * Bu fonksiyon ile cihazýn mac adresi kaydedilmektedir.
  * public void IM_AdresKaydet(String str_adres)
  * 
- * 
  * Bu fonksiyon ile cihazýn açýk ismi alýnmaktadýr.
  * public String IM_SsidGetir()
- * 
  * 
  * Bu fonksiyon ile cihazýn açýk ismi kaydedilmektedir.
  * public void IM_SsidKaydet(String str_ssid)
@@ -112,11 +102,15 @@ public class IM_CihazBilgileriKutuphanesi {
 	 *@param Cihazýn rssi deðeri tutulmaktadýr.
 	 *@param Cihazýn açýk ismi tutulmaktadýr.
 	*********************************************************************************************/ 
-   public IM_CihazBilgileriKutuphanesi(String str_adres, float f_rssi, String str_ssid){
-      super();
-      this.str_adres  = str_adres;
-      this.f_rssi = f_rssi;
-      this.str_ssid = str_ssid;
+   public IM_CihazBilgileriKutuphanesi(String str_adres, float f_rssi, String str_ssid)
+   {
+	   super();
+	   if(str_adres != null && str_ssid != null)
+	   {
+	      this.str_adres  = str_adres;
+	      this.f_rssi = f_rssi;
+	      this.str_ssid = str_ssid;
+	   }
    }
    
    /********************************************************************************************
@@ -154,7 +148,8 @@ public class IM_CihazBilgileriKutuphanesi {
 	 * GEREKLÝLÝK: 
 	 *@param Cihazýn rssi deðeri tutulmaktadýr.
 	*********************************************************************************************/
-   public void IM_RssiKaydet(float f_rssi){
+   public void IM_RssiKaydet(float f_rssi)
+   {
       this.f_rssi = f_rssi;
    }
    
@@ -173,7 +168,8 @@ public class IM_CihazBilgileriKutuphanesi {
 	 * -->
 	 * GEREKLÝLÝK: 
 	*********************************************************************************************/
-   public String IM_AdresGetir(){
+   public String IM_AdresGetir()
+   {
       return str_adres;
    }
    
@@ -193,8 +189,12 @@ public class IM_CihazBilgileriKutuphanesi {
   	 * GEREKLÝLÝK: 
   	 *@param Cihazýn mac adresi tutulmaktadýr.
   	*********************************************************************************************/  
-   public void IM_AdresKaydet(String str_adres){
-      this.str_adres = str_adres;
+   public void IM_AdresKaydet(String str_adres)
+   {
+	   if(str_adres != null)
+	   {
+		   this.str_adres = str_adres;
+	   }
    }
    
    /********************************************************************************************
@@ -212,7 +212,8 @@ public class IM_CihazBilgileriKutuphanesi {
 	 * -->
 	 * GEREKLÝLÝK: 
 	*********************************************************************************************/ 
-   public String IM_SsidGetir(){
+   public String IM_SsidGetir()
+   {
 	  return str_ssid;
    }
    
@@ -232,8 +233,12 @@ public class IM_CihazBilgileriKutuphanesi {
  	 * GEREKLÝLÝK: 
  	 *@param Cihazýn açýk ismi tutulmaktadýr.
  	*********************************************************************************************/
-   public void IM_SsidKaydet(String str_ssid){
-	  this.str_ssid = str_ssid;
+   public void IM_SsidKaydet(String str_ssid)
+   {
+	   if(str_ssid != null)
+	   {
+		   this.str_ssid = str_ssid;
+	   }
    }
    
 }

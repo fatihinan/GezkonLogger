@@ -12,26 +12,22 @@
  * 
  * GLOBAL DEÐÝÞKENLER:
  * 
- * Loglanmasý istenilenh bluetooth cihazlarýnýn mac adreslerinin tutan listedir.
- * List<String> liste_bluetooth_mac_adresleri = new ArrayList<String>();            
- * 
- * 
+ * Loglanmasý istenilen bluetooth cihazlarýnýn mac adreslerinin tutan listedir.
+ * liste_bluetooth_mac_adresleri IM_AnaUygulama tarafýndan rssi verilerinin mac adreslerine göre sýralanmasý 
+ * iþleminde kullanýlacaðýndan dolayý static olarak tanýmlanmýþtýr.
+ * List<String> liste_bluetooth_mac_adresleri        
+ *  
  * Bir ölçüm boyunca Bluetooth bilgilerinin tutulacaðý listelerdir.
  * Ölçüm tamamlandýðýnda veriler bu listelerden çekilerek excel dosyasýna yazdýrýlmaktadýr.
- * List<Cihaz_Kutuphanesi> bluetooth_liste=new ArrayList<Cihaz_Kutuphanesi>();
- *       
- * 
- * Bulunan bluetooth cihazýnýn rssi deðerinin tutulduðu deðiþkendir.
- * float f_rssi;	
- * 
- * 
+ * liste_bluetooth IM_AnaUygulama tarafýndan loglama iþlemi sýrasýnda bluetooth rssi verilerinin okunmasý 
+ * iþleminde kullanýlacaðý için static olarak tanýmlanmýþtýr.
+ * List<Cihaz_Kutuphanesi> liste_bluetooth
+
  * 
  * FONKSÝYON PROTOTÝPLERÝ:
  *
- *
  * Bu fonksiyon ile belirlenen mac adresleri listeye eklenerek loglama sýrasýnda kullanýlmak üzere kaydedilmektedir.
  * public void MacAdresleriniAta()
- * 
  * 
  * Bu fonksiyon ile bluetooth taramasý yapýlmakta ve tarama sonuçlarý listeye eklenmektedir.
  * final static BroadcastReceiver b_alici = new BroadcastReceiver() 
@@ -74,6 +70,10 @@ public class IM_BluetoothKutuphanesi {
 	
 	/**
 	 * Loglanmasý istenilenh bluetooth cihazlarýnýn mac adreslerinin tutan listedir.
+	 * 
+	 * liste_bluetooth_mac_adresleri IM_AnaUygulama tarafýndan rssi verilerinin mac adreslerine göre sýralanmasý 
+	 * 
+	 * iþleminde kullanýlacaðýndan dolayý static olarak tanýmlanmýþtýr.
 	 */
 	static List<String> liste_bluetooth_mac_adresleri = new ArrayList<String>();
 	
@@ -81,13 +81,13 @@ public class IM_BluetoothKutuphanesi {
 	 * Bir ölçüm boyunca Bluetooth bilgilerinin tutulacaðý listelerdir.
 	 * 
 	 * Ölçüm tamamlandýðýnda veriler bu listelerden çekilerek excel dosyasýna yazdýrýlmaktadýr.
+	 * 
+	 * liste_bluetooth IM_AnaUygulama tarafýndan loglama iþlemi sýrasýnda bluetooth rssi verilerinin okunmasý 
+	 * 
+	 * iþleminde kullanýlacaðý için static olarak tanýmlanmýþtýr.
 	 */
 	 static List<IM_CihazBilgileriKutuphanesi> liste_bluetooth=new ArrayList<IM_CihazBilgileriKutuphanesi>();
 	 
-	 /**
-	  * Bulunan bluetooth cihazýnýn rssi deðerinin tutulduðu deðiþkendir.
-	  */
-	 static float f_rssi;
 
 	 
 	 	/********************************************************************************************
@@ -121,8 +121,7 @@ public class IM_BluetoothKutuphanesi {
 		 liste_bluetooth_mac_adresleri.add("5C:AC:4C:D9:DD:3B");
 		 liste_bluetooth_mac_adresleri.add("E4:92:FB:C4:88:39");
 		 liste_bluetooth_mac_adresleri.add("C4:85:08:02:1B:C3");
-		 
-		 
+ 
 	 }
 	 
 	 
@@ -156,7 +155,10 @@ public class IM_BluetoothKutuphanesi {
 			   	     */
 		        	 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 		        	 
-		        	 f_rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
+		        	 /**
+		        	  * Bluetooth cihazdan rssi deðeri alýnmýþtýr. Birimi dbm dir.
+		        	  */
+		        	 float f_rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
 		        	 
 		        	 if(liste_bluetooth_mac_adresleri.contains(device.getAddress()))
 		        	 {

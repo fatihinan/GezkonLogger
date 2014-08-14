@@ -16,7 +16,7 @@
  * ProgressDialog progress_dialog
  * 
  * Test devem ettiði sürece ekranda duracak olan ProgressBar'ýn deðerinin tutulduðu deðiþkendir.
- * static int i_progress_bar_degeri
+ * int i_progress_bar_degeri
  * 
  * Excel dosyasýna kaydedilecek tarih bilgisi için belirlenen formattýr.
  * SimpleDateFormat sdf_tarih
@@ -31,6 +31,8 @@
  * String str_saat
  * 
  * Bluetooth sensörüne ulaþmak için oluþturulan nesnedir.
+ * bluetooth_adapter IM_BluetoothKutuphanesi tarafýndan bluetooth taramasý iþlemlerinde
+ * kullanýlacaðý için static olarak tanýmlanmýþtýr.
  * public static BluetoothAdapter bluetooth_adaptor
  * 
  * Bluetooth iþlemlerini gerçekleþtirmek için oluþturulan nesnedir.
@@ -40,6 +42,8 @@
  * final IM_WifiKutuphanesi wifi_kutuphanesi
  * 
  * WiFi sensörüne ulaþmak için oluþturulan nesnedir.
+ * wifi_yonetici IM_WifiKutuphanesi tarafýndan wifi taramasý sýrasýnda kullanýlacaðý
+ * için static olarak tanýmlanmýþtýr.
  * public static WifiManager wifi_yonetici
  * 
  * Kullanýcýnýn teste baþlamadan önce EditText e gireceði x koordinatý deðerini tutan deðiþkenlerdir.
@@ -70,6 +74,9 @@
  * IM_ExcelIslemleriKutuphanesi excel_kutuphanesi
  * 
  * Cihaz içerisinde bulunan sensörlere ulaþmak için gerekli olan sensör yöneticisi nesnesidir.
+ * sensor_yoneticisi IM_ManyetikAlanKutuphanesi tarafýndan manyetik alan verilerini okumada,
+ * IM_IvmeolcerKutuphanesi tarafýndan ivmeölçer verilerini okumada kullanýlacaðýndan dolayý
+ * static olara ktanýmlanmýþtýr.
  * public static SensorManager sensor_yoneticisi
  * 
  * Manyetik alan iþlemlerini gerçekleþtirmek için oluþturulan nesnedir.
@@ -117,6 +124,12 @@
  * Loglama iþleminin baþlatýlacaðý Log Al butonudur.
  * Button btn_log_al
  * 
+ * Bluetooth testi için milisaniye cinsinden belirlenen toplam süredir.
+ * int i_bluetooth_toplam_sure
+ * 
+ * Herbir bluetooth ölçümü için milisaniye cinsinden belirlenen süredir.
+ * int i_bluetooth_tek_sure
+ * 
  * 
  * FONKSÝYON PROTOTÝPLERÝ:
  * 
@@ -157,6 +170,33 @@
  * larý týklanabilir hale getirilmiþtir.
  * public void IM_CheckedTextViewTiklanabilirAyarla()
  * 
+ * Bu fonksiyon ile herbir bluetooth ölçümü sonrasýnda gelen veriler
+ * excelde bulunan mac adreslerine göre sýralanarak listeye eklenmektedir. 
+ * Test tamamlandýðýnda bu veriler listeden okunarak excel dosyasýna yazdrýlmaktadýr.
+ * public void IM_BluetoothVerileriniListeyeEkle()
+ * 
+ * Bu fonksiyon ile herbir wifi ölçümü sonrasýnda gelen veriler
+ * excelde bulunan mac adreslerine göre sýralanarak listeye eklenmektedir. 
+ * Test tamamlandýðýnda bu veriler listeden okunarak excel dosyasýna yazdrýlmaktadýr.
+ * public void IM_WiFiVerileriniListeyeEkle()
+ * 
+ * Bu fonksiyon ile arayüz üzerinde girilmesi gereken bilgilerin kontrolü yapýlmaktadýr.
+ * Eðer bilgiler eksiksiz ise true, eksik bilgi varsa false deðerini dönmektedir.
+ * public boolean IM_BilgilerGecerliMi()
+ * 
+ * Bu fonksiyon ile arayüz üzerinden hangi testlerin seçili olduðu belirlenmektedir.
+ * public void IM_TestleriBelirle(View v)	
+ * 
+ * Bu fonksiyon güncel tarih ve saat bilgisi sistemden alýnmaktadýr.	
+ * public void IM_TarihVeSaatiGuncelle()
+ * 
+ * Bu fonksiyon bir ölçüm sonlandýðýnda toplanan veriler excel dosyasýna yazdýrýlmaktadýr.	
+ * public void IM_SeciliVerileriLogla()	
+ * 
+ * Bu fonksiyon WiFi sayfasý için güncellenen format sayfaya eklenmektedir.	
+ * public void IM_WiFiFormatGuncelle()
+ *		
+ * 
  * GELÝÞTÝRME GEÇMÝÞÝ:
  *
  * Yazar: Fatih ÝNAN, Furkan GÜNER
@@ -184,6 +224,7 @@ import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -232,6 +273,10 @@ public class IM_AnaUygulama extends Activity {
 	
 	/**
 	 * Bluetooth sensörlerine ulaþmak için bluetooth_adaptor ve IM_BluetoothKutuphanesi nesneleri oluþturuldu.
+	 * 
+	 * bluetooth_adapter IM_BluetoothKutuphanesi tarafýndan bluetooth taramasý iþlemlerinde
+	 * 
+	 *  kullanýlacaðý için static olarak tanýmlanmýþtýr.
 	 */
 	public static BluetoothAdapter bluetooth_adaptor;
 	IM_BluetoothKutuphanesi bluetooth_kutuphanesi = new IM_BluetoothKutuphanesi();
@@ -265,12 +310,22 @@ public class IM_AnaUygulama extends Activity {
 	
 	/**
 	 * Wifi sensörlerine ulaþmak için oluþturulan nesnelerdir.
+	 * 
+	 * wifi_yonetici IM_WifiKutuphanesi tarafýndan wifi taramasý sýrasýnda kullanýlacaðý
+	 * 
+	 * için static olarak tanýmlanmýþtýr.
 	 */
 	final IM_WifiKutuphanesi wifi_kutuphanesi=new IM_WifiKutuphanesi();
 	public static WifiManager wifi_yonetici;
 	
 	/**
 	 * Ývmeölçer ve manyetik alan sensörlerine ulaþmak için sensör yöneticisi oluþturuldu.
+	 * 
+	 * sensor_yoneticisi IM_ManyetikAlanKutuphanesi tarafýndan manyetik alan verilerini okumada,
+	 * 
+	 * IM_IvmeolcerKutuphanesi tarafýndan ivmeölçer verilerini okumada kullanýlacaðýndan dolayý
+	 * 
+	 * static olara ktanýmlanmýþtýr.
 	 */
 	public static SensorManager sensor_yoneticisi = null;
 	IM_ManyetikAlanKutuphanesi manyetik_alan_kutuphanesi = new IM_ManyetikAlanKutuphanesi();
@@ -309,6 +364,12 @@ public class IM_AnaUygulama extends Activity {
 	 */
 	Button btn_log_al;
 	
+	/**
+	 * Bluetooth testi için toplam süre ve herbir bluetooth ölçümü için belirlenen süreler tanýmlanmýþtýr.
+	 */
+	int i_bluetooth_toplam_sure = 66000;
+	int i_bluetooth_tek_sure = 6000; 
+	
 	
 	/********************************************************************************************
 	 * 
@@ -334,6 +395,14 @@ public class IM_AnaUygulama extends Activity {
 		 */
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		/**
+		 * Ekranýn otomatik olarak kararma süresi yarým saat olarak ayarlanmýþtýr.
+		 * 
+		 * 30 dk = 1800000 milisaniye dir.
+		 */
+		android.provider.Settings.System.putInt(getContentResolver(),
+	            Settings.System.SCREEN_OFF_TIMEOUT, 1800000);
 		
 		/**
 		 * Pil seviyesinin okunabilmesi için sisteme kayýt yapýlmýþtýr.
@@ -430,57 +499,32 @@ public class IM_AnaUygulama extends Activity {
 				// TODO Auto-generated method stub
 				
 				/**
-				 * Log Al butonuna týklandýðýnda excel dosyasýna yazdýrýlmak üzere 
+				 * Konum ve test bilgilerinin girilip girilmediði kontrol edilmekte, 
 				 * 
-				 * konum ve kat bilgileri edittext'lerden alýnmýþtýr.
+				 * eðer bilgiler eksiksiz girilmiþ ise test baþlatýlmaktadýr.
 				 */
-				str_konum_x = et_x.getText().toString();
-				str_konum_y = et_y.getText().toString();
-				str_kat = et_kat.getText().toString();
-				
-				if(str_konum_x.contentEquals("") || str_konum_y.contentEquals("") || str_kat.contentEquals(""))
+				if(IM_BilgilerGecerliMi())
 				{
-					Toast.makeText(getApplicationContext(), "Lütfen x koordinatý,  y koordinatý ve kat bilgilerinin eksiksiz doldurunuz.", Toast.LENGTH_LONG).show();
-				}
-				else
-				{
-					
 					/**
-					 * Log Al butonuna basýldýðýnda hangi parametrelerin loglanacaðý CheckedListView lardan belirlenmiþtir.
+					 * Arayüz üzerinden hangi testlerin seçili olduðu belirlenmiþtir. 
 					 */
-					b_log_wifi = ctv_wifi.isChecked();
-					b_log_bluetooth = ctv_bluetooth.isChecked();
-					b_log_manyetik_alan = ctv_manyetik_alan.isChecked();
-					b_log_ivmeolcer = ctv_ivmeolcer.isChecked();
-	
-					int i_toplam_sure = 66000;
-					int i_tek_sure = 6000; 
-					if(b_log_bluetooth || b_log_manyetik_alan || b_log_ivmeolcer)
-					{
-						IM_ProgressBarBaslat(v, "");
-					}
-					else
-					{
-						i_toplam_sure = 100;
-						i_tek_sure = 100;
-					}
+					IM_TestleriBelirle(v);
 					
 					/**
 					  * Her 6 saniyede bir güncel veriler listelere eklenmektedir.
 					  * 
 					  * Toplam 10 test verisi toplandýðýnda onFinish metoduna giderek dosyaya kaydetme iþlemi gerçekleþtirilmektedir.
 					  */
-					 new CountDownTimer(i_toplam_sure, i_tek_sure) {
+					 new CountDownTimer(i_bluetooth_toplam_sure, i_bluetooth_tek_sure) {
 					 public void onTick(long millisUntilFinished) {
 					
 						 /**
 						  * Güncel tarih ve saat bilgisi sistemden alýnmaktadýr.
 						  */
-						 str_tarih = sdf_tarih.format(new Date());
-						 str_saat = sdf_saat.format(new Date());
+						 IM_TarihVeSaatiGuncelle();
 						 
 						 /**
-						  * CheckedTextView da seçilen parametreler loglanmaktadýr.
+						  * CheckedTextView da seçilen parametreler için tarama iþlemi yapýlmaktadýr.
 						  */
 						 if(b_log_ivmeolcer)
 						 {
@@ -504,8 +548,7 @@ public class IM_AnaUygulama extends Activity {
 						 /**
 						  * Güncel tarih ve saat bilgisi sistemden alýnmaktadýr.
 						  */
-						 str_tarih = sdf_tarih.format(new Date());
-						 str_saat = sdf_saat.format(new Date());
+						 IM_TarihVeSaatiGuncelle();
 						 
 						 /**
 						  * Bluetooth, ivmeölçer ve manyetik alan testlerinin tamamlanmasý sonrasýnda ProgressBar kapatýlmýþtýr.
@@ -513,66 +556,9 @@ public class IM_AnaUygulama extends Activity {
 						 IM_ProgressBarKapat();
 						 
 						 /**
-						  * Bir ölçüm sonlandýðýnda toplanan veriler excel dosyasýna yazdýrýlmýþtýr.
+						  * Seçili olan veriler excel dosyasýna kaydedilmiþtir.
 						  */
-						 if(b_log_ivmeolcer)
-						 {
-							 /**
-							  * Ývmeölçer verileri excel dosyasýnýn Ivmeolcer sayfasýna yazdýrýlmýþtýr.
-							  */
-							 excel_kutuphanesi.IM_ExcelDosyasinayaYaz("Ivmeolcer", liste_ivmeolcer);
-						 }
-						 if(b_log_manyetik_alan)
-						 {
-							 /**
-							  * Manyetik alan verileri excel dosyasýnýn ManyetikAlan sayfasýna yazdýrýlmýþtýr.
-							  */
-							 excel_kutuphanesi.IM_ExcelDosyasinayaYaz("ManyetikAlan", liste_manyetik_alan);
-						 }
-						 if(b_log_bluetooth)
-						 {
-							 /**
-							  * Devam eden herhangi bir tarama bulunuyorsa iptal edilmiþtir.
-							  */
-							     bluetooth_adaptor.cancelDiscovery();
-							    
-							     /**
-								  * Bluetooth verileri excel dosyasýnýn Bluetooth sayfasýna yazdýrýlmýþtýr.
-								  */
-								 String[] bluetooth_hucreleri  = new String[19];
-								 bluetooth_hucreleri[0] = "ölçüm";
-								 bluetooth_hucreleri[1] = str_tarih;
-								 bluetooth_hucreleri[2] = str_saat;
-								 bluetooth_hucreleri[3] = str_konum_x;
-								 bluetooth_hucreleri[4] = str_konum_y;
-								 bluetooth_hucreleri[5] = str_kat;
-								 bluetooth_hucreleri[6] = "NaN";
-								 bluetooth_hucreleri[7] = "NaN";
-								 bluetooth_hucreleri[8] = "NaN";
-								 bluetooth_hucreleri[9] = "NaN";
-								 bluetooth_hucreleri[10] = "NaN";
-								 bluetooth_hucreleri[11] = "NaN";
-								 bluetooth_hucreleri[12] = "NaN";
-								 bluetooth_hucreleri[13] = "NaN";
-								 bluetooth_hucreleri[14] = "NaN";
-								 bluetooth_hucreleri[15] = "NaN";
-								 bluetooth_hucreleri[16] = "NaN";
-								 bluetooth_hucreleri[17] = "NaN";
-								 for(int i=0; i<IM_BluetoothKutuphanesi.liste_bluetooth_mac_adresleri.size(); i++)
-								 {
-									 for(int j=0; j<IM_BluetoothKutuphanesi.liste_bluetooth.size(); j++)
-									 {
-										 if(IM_BluetoothKutuphanesi.liste_bluetooth_mac_adresleri.get(i).equals(IM_BluetoothKutuphanesi.liste_bluetooth.get(j).IM_AdresGetir()))
-										 {
-											 bluetooth_hucreleri[i+6] = Double.toString(IM_BluetoothKutuphanesi.liste_bluetooth.get(j).IM_RssiGetir());
-										 }
-									 }
-								 }
-								 bluetooth_hucreleri[18] = str_pil_seviyesi;
-								 liste_bluetooth.add(bluetooth_hucreleri);
-								 excel_kutuphanesi.IM_ExcelDosyasinayaYaz("Bluetooth", liste_bluetooth);
-	
-						 }
+						 IM_SeciliVerileriLogla();
 						 
 						 /**
 						  * Listeler excele kaydedildikten sonra, bir sonraki ölçümelerde kullanýlmak üzere boþaltýlmýþtýr. 
@@ -621,7 +607,6 @@ public class IM_AnaUygulama extends Activity {
 						 IM_ProgressBarBaslat(v, "WiFi");
 						 
 						
-						 
 						 /**
 						  * 3 er saniye aralýklarla 10 adet wifi test verisi toplanmaktadýr.
 						  */
@@ -632,15 +617,22 @@ public class IM_AnaUygulama extends Activity {
 									 /**
 									  * Güncel tarih ve saat bilgisi sistemden alýnmaktadýr.
 									  */
-									 str_tarih = sdf_tarih.format(new Date());
-									 str_saat = sdf_saat.format(new Date());
+									 IM_TarihVeSaatiGuncelle();
 	
 									 /**
 									  * WiFi taramasý baþlatýlmýþtýr.
 									  */
 									 IM_WiFiTara();
+									 
+									 
+									 /**
+									  * Bir ölçüm içerisinde kaçýncý wifi taramasýnda olunduðunu tutan deðiþkenin deðeri 1 arttýrýlmýþtýr.
+									  */
 									 i_wifi_sayac++;
 									 
+									 /**
+									  * Her bir ölçüm sonrasý progress bar ýn deðeri arttýrýlmýþtýr.
+									  */
 									 IM_ProgressBarDoldur();
 								 }
 								 public void onFinish() 
@@ -648,59 +640,17 @@ public class IM_AnaUygulama extends Activity {
 									 /**
 									  * Güncel tarih ve saat bilgisi sistemden alýnmaktadýr.
 									  */
-									 str_tarih = sdf_tarih.format(new Date());
-									 str_saat = sdf_saat.format(new Date());
+									 IM_TarihVeSaatiGuncelle();
 									 
-									 	/**
-										 * Wifi sayfasý için belirlenen format sayfaya eklendi.
-										 */
-										ArrayList<String[]> liste_wifi_format = new ArrayList<String[]>();
-										String[] wifi_format_hucreleri  = new String[102];
-										wifi_format_hucreleri[0] = "ÖLÇÜM";
-										wifi_format_hucreleri[1] = "TARÝH";
-										wifi_format_hucreleri[2] = "ZAMAN";
-										wifi_format_hucreleri[3] = "KONUM_X";
-										wifi_format_hucreleri[4] = "KONUM_Y";
-										wifi_format_hucreleri[5] = "KAT";
-										wifi_format_hucreleri[6] = "PÝL DURUMU";
-										int i_liste_boyutu = IM_WifiKutuphanesi.liste_mac_adresleri_toplam.size() + 7;
-										for(int i=7; i<i_liste_boyutu; i++)
-										{
-											wifi_format_hucreleri[i] = IM_WifiKutuphanesi.liste_mac_adresleri_toplam.get(i-7);
-										}
-										for(int i=7+i_liste_boyutu;i<100;i++)
-										{
-											wifi_format_hucreleri[i] = "";
-										}
-										wifi_format_hucreleri[100] = "";
-										wifi_format_hucreleri[101] = "";
-									    liste_wifi_format.add(wifi_format_hucreleri);
-									    excel_kutuphanesi.IM_WiFiFormatGuncelle("WiFi", liste_wifi_format);
-			
-									    String[] wifi_hucreleri  = new String[IM_WifiKutuphanesi.liste_mac_adresleri_toplam.size()+7];
-									    wifi_hucreleri[0] = "ölçüm";
-									    wifi_hucreleri[1] = str_tarih;
-									    wifi_hucreleri[2] = str_saat;
-									    wifi_hucreleri[3] = str_konum_x;
-									    wifi_hucreleri[4] = str_konum_y;
-									    wifi_hucreleri[5] = str_kat;
-									    wifi_hucreleri[6] = str_pil_seviyesi;
-									    for(int i=7; i<IM_WifiKutuphanesi.liste_mac_adresleri_toplam.size()+7; i++)
-									    {
-									    	wifi_hucreleri[i] = "NaN";
-									    }
-		
-										 for(int i=0; i<IM_WifiKutuphanesi.liste_mac_adresleri_toplam.size(); i++)
-										 {
-											 for(int j=0; j<IM_WifiKutuphanesi.cihaz_bilgiler_guncel.size(); j++)
-											 {
-												 if(IM_WifiKutuphanesi.liste_mac_adresleri_toplam.get(i).equals(IM_WifiKutuphanesi.cihaz_bilgiler_guncel.get(j).IM_AdresGetir()))
-												 {
-													 wifi_hucreleri[i+7] = Double.toString(IM_WifiKutuphanesi.cihaz_bilgiler_guncel.get(j).IM_RssiGetir());
-												 }
-											 }
-										 }
-										 liste_wifi.add(wifi_hucreleri);
+									 /**
+									  * Wifi sayfasý için güncellenen format sayfaya eklendi.
+									  */
+									 IM_WiFiFormatGuncelle();
+									 
+									    /**
+									     * WiFi testi sonucu elde edilen veriler listeye eklenmiþtir.
+									     */
+									    IM_WiFiVerileriniListeyeEkle();
 	
 										 /**
 										  * WiFi testi tamamlandýðýnda toplanan veriler excel dosyasýnýn WiFi sayfasýna yazdýrýlmýþtýr.
@@ -730,6 +680,219 @@ public class IM_AnaUygulama extends Activity {
 	}
 	
 	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_WiFiFormatGuncelle </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon WiFi sayfasý için güncellenen format sayfaya eklenmektedir.   </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * -->
+	*********************************************************************************************/
+	public void IM_WiFiFormatGuncelle()
+	{
+		/**
+		 * Wifi sayfasý için güncellenen format sayfaya eklendi.
+		 */
+		ArrayList<String[]> liste_wifi_format = new ArrayList<String[]>();
+		String[] wifi_format_hucreleri  = new String[102];
+		wifi_format_hucreleri[0] = "ÖLÇÜM";
+		wifi_format_hucreleri[1] = "TARÝH";
+		wifi_format_hucreleri[2] = "ZAMAN";
+		wifi_format_hucreleri[3] = "KONUM_X";
+		wifi_format_hucreleri[4] = "KONUM_Y";
+		wifi_format_hucreleri[5] = "KAT";
+		wifi_format_hucreleri[6] = "PÝL DURUMU";
+		int i_liste_boyutu = IM_WifiKutuphanesi.liste_mac_adresleri_toplam.size() + 7;
+		for(int i=7; i<i_liste_boyutu; i++)
+		{
+			wifi_format_hucreleri[i] = IM_WifiKutuphanesi.liste_mac_adresleri_toplam.get(i-7);
+		}
+		for(int i=7+i_liste_boyutu;i<100;i++)
+		{
+			wifi_format_hucreleri[i] = "";
+		}
+		wifi_format_hucreleri[100] = "";
+		wifi_format_hucreleri[101] = "";
+	    liste_wifi_format.add(wifi_format_hucreleri);
+	    excel_kutuphanesi.IM_WiFiFormatGuncelle("WiFi", liste_wifi_format);
+
+	}
+	
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_SeciliVerileriLogla </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon bir ölçüm sonlandýðýnda toplanan veriler excel dosyasýna yazdýrýlmaktadýr.   </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * -->
+	*********************************************************************************************/
+	public void IM_SeciliVerileriLogla()
+	{
+		 /**
+		  * Bir ölçüm sonlandýðýnda toplanan veriler excel dosyasýna yazdýrýlmýþtýr.
+		  */
+		 if(b_log_ivmeolcer)
+		 {
+			 /**
+			  * Ývmeölçer verileri excel dosyasýnýn Ivmeolcer sayfasýna yazdýrýlmýþtýr.
+			  */
+			 excel_kutuphanesi.IM_ExcelDosyasinayaYaz("Ivmeolcer", liste_ivmeolcer);
+		 }
+		 if(b_log_manyetik_alan)
+		 {
+			 /**
+			  * Manyetik alan verileri excel dosyasýnýn ManyetikAlan sayfasýna yazdýrýlmýþtýr.
+			  */
+			 excel_kutuphanesi.IM_ExcelDosyasinayaYaz("ManyetikAlan", liste_manyetik_alan);
+		 }
+		 if(b_log_bluetooth)
+		 {
+			 /**
+			  * Devam eden herhangi bir tarama bulunuyorsa iptal edilmiþtir.
+			  */
+			     bluetooth_adaptor.cancelDiscovery();
+			    
+			     IM_BluetoothVerileriniListeyeEkle();
+			     
+			     /**
+				  * Bluetooth verileri excel dosyasýnýn Bluetooth sayfasýna yazdýrýlmýþtýr.
+				  */
+				 excel_kutuphanesi.IM_ExcelDosyasinayaYaz("Bluetooth", liste_bluetooth);
+
+		 }
+	}
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_TarihVeSaatiGuncelle </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon güncel tarih ve saat bilgisi sistemden alýnmaktadýr.   </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * -->
+	*********************************************************************************************/
+	public void IM_TarihVeSaatiGuncelle()
+	{
+		str_tarih = sdf_tarih.format(new Date());
+		str_saat = sdf_saat.format(new Date());
+	}
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_TestleriBelirle </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile arayüz üzerinden hangi testlerin seçili olduðu belirlenmektedir.   </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *			v							View				Pop-up ekranýný gösterileceði arayüze referanstýr.
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * -->
+	 * 
+	 * @param v Pop-up ekranýný gösterileceði arayüze referanstýr.
+	*********************************************************************************************/
+	public void IM_TestleriBelirle(View v)
+	{
+		if(v != null)
+		{
+			String str_loglanacak_parametreler = "";
+			if(b_log_bluetooth)
+			{
+				str_loglanacak_parametreler += "Bluetooth,";
+			}
+			if(b_log_manyetik_alan)
+			{
+				str_loglanacak_parametreler += " Manyetik Alan,";
+			}
+			if(b_log_ivmeolcer)
+			{
+				str_loglanacak_parametreler += " Ývmeölçer";
+			}
+	
+			
+			if(b_log_bluetooth || b_log_manyetik_alan || b_log_ivmeolcer)
+			{
+				IM_ProgressBarBaslat(v, str_loglanacak_parametreler);
+			}
+			else
+			{
+				i_bluetooth_toplam_sure = 100;
+				i_bluetooth_tek_sure = 100;
+			}
+		}
+	}
+	
+
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_BilgilerGecerliMi </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile arayüz üzerinde girilmesi gereken bilgilerin kontrolü yapýlmaktadýr.
+	 * Eðer bilgiler eksiksiz ise true, eksik bilgi varsa false deðerini dönmektedir.  </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 * 										boolean				Eðer bilgiler eksiksiz ise true, eksik bilgi varsa false deðerini dönmektedir.			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public boolean IM_BilgilerGecerliMi()
+	{
+		/**
+		 * Log Al butonuna týklandýðýnda excel dosyasýna yazdýrýlmak üzere 
+		 * 
+		 * konum ve kat bilgileri edittext'lerden alýnmýþtýr.
+		 */
+		str_konum_x = et_x.getText().toString();
+		str_konum_y = et_y.getText().toString();
+		str_kat = et_kat.getText().toString();
+		
+		/**
+		 * Log Al butonuna basýldýðýnda hangi parametrelerin loglanacaðý CheckedListView lardan belirlenmiþtir.
+		 */
+		b_log_wifi = ctv_wifi.isChecked();
+		b_log_bluetooth = ctv_bluetooth.isChecked();
+		b_log_manyetik_alan = ctv_manyetik_alan.isChecked();
+		b_log_ivmeolcer = ctv_ivmeolcer.isChecked();
+		
+		/**
+		 * x koordinatý, y koordinatý, kat bilgilerinin girilip girilmediði kontrol edilmektedir.
+		 * 
+		 * En az bir  testin seçili olup olmadýðý kontrol edilmektedir.
+		 * 
+		 * Eðer x koordinatý, y koordinatý, kat bilgileri girilmiþ ve en az bir test seçilmiþse 
+		 * 
+		 * loglama iþlemi baþlatýlmakta, aksi taktirde uyarý verilerel loglama iþlemi baþlatýlmamaktadýr.
+		 */
+		if(str_konum_x.contentEquals("") || str_konum_y.contentEquals("") || str_kat.contentEquals("") || !(b_log_wifi || b_log_bluetooth || b_log_manyetik_alan || b_log_ivmeolcer))
+		{
+			Toast.makeText(getApplicationContext(), "Lütfen x koordinatý,  y koordinatý ve kat bilgilerinin eksiksiz doldurunuz ve en az bir test seçiniz.", Toast.LENGTH_LONG).show();
+			return false;
+		}
+		return true;
+	}
+	
 	
 	/********************************************************************************************
 	 * 
@@ -747,6 +910,36 @@ public class IM_AnaUygulama extends Activity {
 	 * 
 	*********************************************************************************************/
 	public void IM_WiFiTara()
+	{
+		/**
+		 * Herbir wifi ölçümü sonrasýnda gelen veriler excelde bulunan mac adreslerine göre sýralanarak listeye eklenmektedir.
+		 */
+		IM_WiFiVerileriniListeyeEkle();
+		
+		IM_WifiKutuphanesi.cihaz_bilgiler_guncel.clear();
+		
+		wifi_kutuphanesi.IM_WifiTaramaBaslat();
+		
+	}
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_WiFiVerileriniListeyeEkle </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile herbir wifi ölçümü sonrasýnda gelen veriler
+	 *  excelde bulunan mac adreslerine göre sýralanarak listeye eklenmektedir. 
+	 *  Test tamamlandýðýnda bu veriler listeden okunarak excel dosyasýna yazdrýlmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public void IM_WiFiVerileriniListeyeEkle()
 	{
 		/**
 		 * Herbir wifi ölçümü sonrasýnda gelen veriler excelde bulunan mac adreslerine göre sýralanarak listeye eklenmektedir.
@@ -779,10 +972,6 @@ public class IM_AnaUygulama extends Activity {
 			}
 			liste_wifi.add(wifi_hucreleri);
 		}
-		IM_WifiKutuphanesi.cihaz_bilgiler_guncel.clear();
-		
-		wifi_kutuphanesi.IM_WifiTaramaBaslat();
-		
 	}
 	
 	
@@ -809,47 +998,70 @@ public class IM_AnaUygulama extends Activity {
 		   if (bluetooth_adaptor.isDiscovering()) 
 		   {
 			   bluetooth_adaptor.cancelDiscovery();
-			    /**
-				 * Herbir ivmeölçer ölçümü sonrasýnda gelen veriler excelde bulunan mac adreslerine göre sýralanarak listeye eklenmektedir.
-				 * 
-				 * Test tamamlandýðýnda bu veriler listeden okunarak excel dosyasýna yazdrýlmaktadýr.
-				 */
-				 String[] bluetooth_hucreleri  = new String[19];
-				 bluetooth_hucreleri[0] = "ölçüm";
-				 bluetooth_hucreleri[1] = str_tarih;
-				 bluetooth_hucreleri[2] = str_saat;
-				 bluetooth_hucreleri[3] = str_konum_x;
-				 bluetooth_hucreleri[4] = str_konum_y;
-				 bluetooth_hucreleri[5] = str_kat;
-				 bluetooth_hucreleri[6] = "NaN";
-				 bluetooth_hucreleri[7] = "NaN";
-				 bluetooth_hucreleri[8] = "NaN";
-				 bluetooth_hucreleri[9] = "NaN";
-				 bluetooth_hucreleri[10] = "NaN";
-				 bluetooth_hucreleri[11] = "NaN";
-				 bluetooth_hucreleri[12] = "NaN";
-				 bluetooth_hucreleri[13] = "NaN";
-				 bluetooth_hucreleri[14] = "NaN";
-				 bluetooth_hucreleri[15] = "NaN";
-				 bluetooth_hucreleri[16] = "NaN";
-				 bluetooth_hucreleri[17] = "NaN";
-				 for(int i=0; i<IM_BluetoothKutuphanesi.liste_bluetooth_mac_adresleri.size(); i++)
-				 {
-					 for(int j=0; j<IM_BluetoothKutuphanesi.liste_bluetooth.size(); j++)
-					 {
-						 if(IM_BluetoothKutuphanesi.liste_bluetooth_mac_adresleri.get(i).equals(IM_BluetoothKutuphanesi.liste_bluetooth.get(j).IM_AdresGetir()))
-						 {
-							 bluetooth_hucreleri[i+6] = Double.toString(IM_BluetoothKutuphanesi.liste_bluetooth.get(j).IM_RssiGetir());
-						 }
-					 }
-				 }
-				 bluetooth_hucreleri[18] = str_pil_seviyesi;
-				 liste_bluetooth.add(bluetooth_hucreleri);
+			   IM_BluetoothVerileriniListeyeEkle();
 		   }
 		   IM_BluetoothKutuphanesi.liste_bluetooth.clear();
 		   bluetooth_adaptor.startDiscovery();
 		   registerReceiver(IM_BluetoothKutuphanesi.b_alici, new IntentFilter(BluetoothDevice.ACTION_FOUND));
 	   }
+	
+	
+	/********************************************************************************************
+	 * 
+	 * FONKSÝYON ADI: 				IM_BluetoothVerileriniListeyeEkle </br> </br>
+	 * FONKSÝYON AÇIKLAMASI: 		Bu fonksiyon ile herbir bluetooth ölçümü sonrasýnda gelen veriler
+	 *  excelde bulunan mac adreslerine göre sýralanarak listeye eklenmektedir. 
+	 *  Test tamamlandýðýnda bu veriler listeden okunarak excel dosyasýna yazdrýlmaktadýr. </br> </br>
+	 *
+	 * ERÝÞÝM: Public </br> </br>
+	 * <!--
+	 * PARAMETRELER:
+	 * 			ADI							TÝPÝ				AÇIKLAMASI
+	 *
+	 * DÖNÜÞ:	
+	 * 			ADI							TÝPÝ				AÇIKLAMASI			
+	 * -->
+	 * 
+	*********************************************************************************************/
+	public void IM_BluetoothVerileriniListeyeEkle()
+	{
+		 /**
+		 * Herbir bluetooth ölçümü sonrasýnda gelen veriler excelde bulunan mac adreslerine göre sýralanarak listeye eklenmektedir.
+		 * 
+		 * Test tamamlandýðýnda bu veriler listeden okunarak excel dosyasýna yazdrýlmaktadýr.
+		 */
+		 String[] bluetooth_hucreleri  = new String[19];
+		 bluetooth_hucreleri[0] = "ölçüm";
+		 bluetooth_hucreleri[1] = str_tarih;
+		 bluetooth_hucreleri[2] = str_saat;
+		 bluetooth_hucreleri[3] = str_konum_x;
+		 bluetooth_hucreleri[4] = str_konum_y;
+		 bluetooth_hucreleri[5] = str_kat;
+		 bluetooth_hucreleri[6] = str_pil_seviyesi;
+		 bluetooth_hucreleri[7] = "NaN";
+		 bluetooth_hucreleri[8] = "NaN";
+		 bluetooth_hucreleri[9] = "NaN";
+		 bluetooth_hucreleri[10] = "NaN";
+		 bluetooth_hucreleri[11] = "NaN";
+		 bluetooth_hucreleri[12] = "NaN";
+		 bluetooth_hucreleri[13] = "NaN";
+		 bluetooth_hucreleri[14] = "NaN";
+		 bluetooth_hucreleri[15] = "NaN";
+		 bluetooth_hucreleri[16] = "NaN";
+		 bluetooth_hucreleri[17] = "NaN";
+		 bluetooth_hucreleri[18] = "NaN";
+		 for(int i=0; i<IM_BluetoothKutuphanesi.liste_bluetooth_mac_adresleri.size(); i++)
+		 {
+			 for(int j=0; j<IM_BluetoothKutuphanesi.liste_bluetooth.size(); j++)
+			 {
+				 if(IM_BluetoothKutuphanesi.liste_bluetooth_mac_adresleri.get(i).equals(IM_BluetoothKutuphanesi.liste_bluetooth.get(j).IM_AdresGetir()))
+				 {
+					 bluetooth_hucreleri[i+7] = Double.toString(IM_BluetoothKutuphanesi.liste_bluetooth.get(j).IM_RssiGetir());
+				 }
+			 }
+		 }
+		 liste_bluetooth.add(bluetooth_hucreleri);
+	}
 	
 	
 	
@@ -881,10 +1093,10 @@ public class IM_AnaUygulama extends Activity {
 		 ivmeolcer_hucreleri[3] = str_konum_x;
 		 ivmeolcer_hucreleri[4] = str_konum_y;
 		 ivmeolcer_hucreleri[5] = str_kat;
-		 ivmeolcer_hucreleri[6] = String.valueOf(ivmeolcer_kutuphanesi.IM_IvmeolcerGetirX());
-		 ivmeolcer_hucreleri[7] = String.valueOf(ivmeolcer_kutuphanesi.IM_IvmeolcerGetirY());
-		 ivmeolcer_hucreleri[8] = String.valueOf(ivmeolcer_kutuphanesi.IM_IvmeolcerGetirZ());
-		 ivmeolcer_hucreleri[9] = str_pil_seviyesi;
+		 ivmeolcer_hucreleri[6] = str_pil_seviyesi;
+		 ivmeolcer_hucreleri[7] = String.valueOf(ivmeolcer_kutuphanesi.IM_IvmeolcerGetirX());
+		 ivmeolcer_hucreleri[8] = String.valueOf(ivmeolcer_kutuphanesi.IM_IvmeolcerGetirY());
+		 ivmeolcer_hucreleri[9] = String.valueOf(ivmeolcer_kutuphanesi.IM_IvmeolcerGetirZ());
 		 liste_ivmeolcer.add(ivmeolcer_hucreleri);
 	}
 	
@@ -916,10 +1128,10 @@ public class IM_AnaUygulama extends Activity {
 		 manyetik_alan_hucreleri[3] = str_konum_x;
 		 manyetik_alan_hucreleri[4] = str_konum_y;
 		 manyetik_alan_hucreleri[5] = str_kat;
-		 manyetik_alan_hucreleri[6] = String.valueOf(manyetik_alan_kutuphanesi.IM_ManyetikAlanGetirX());
-		 manyetik_alan_hucreleri[7] = String.valueOf(manyetik_alan_kutuphanesi.IM_ManyetikAlanGetirY());
-		 manyetik_alan_hucreleri[8] = String.valueOf(manyetik_alan_kutuphanesi.IM_ManyetikAlanGetirZ());
-		 manyetik_alan_hucreleri[9] = str_pil_seviyesi;
+		 manyetik_alan_hucreleri[6] = str_pil_seviyesi;
+		 manyetik_alan_hucreleri[7] = String.valueOf(manyetik_alan_kutuphanesi.IM_ManyetikAlanGetirX());
+		 manyetik_alan_hucreleri[8] = String.valueOf(manyetik_alan_kutuphanesi.IM_ManyetikAlanGetirY());
+		 manyetik_alan_hucreleri[9] = String.valueOf(manyetik_alan_kutuphanesi.IM_ManyetikAlanGetirZ()); 
 		 liste_manyetik_alan.add(manyetik_alan_hucreleri);
 	}
 	
@@ -944,35 +1156,38 @@ public class IM_AnaUygulama extends Activity {
 	 * @param v Uygulamanýn çalýþacaðý ekranýn referans görüntüsüdür.
 	 * @param str_test_ismi "str_test_ismi Loglanýyor" þeklinde görüntülenecek mesajdýr.
 	*********************************************************************************************/
-	public void IM_ProgressBarBaslat(View v, String str_test_ismi){
-		
-		/**
-		 * ProgressBar oluþturulmuþtur.
-		 */
-		progress_dialog = new ProgressDialog(v.getContext());
-		
-		/**
-		 * ProgressBar yatay olacak þekilde ve mesajý "Loglanýyor ..." olacak þekilde ayarlanmþtýr.
-		 */
-		progress_dialog.setMessage(str_test_ismi + " Loglanýyor ...");
-		progress_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		
-		/**
-		 * ProgressBar ýn alabileceði maksimum ve minimum deðerler belirlenmiþtir.
-		 */
-		progress_dialog.setProgress(0);
-		progress_dialog.setMax(100);
-		
-		/**
-		 * ProgressBar arayüz üzerinde gösterilmiþ ve iptal edilebilirliði false olarak ayarlanmýþtýr.
-		 */
-		progress_dialog.show();
-		progress_dialog.setCancelable(false);
-		
-        /**
-         * ProgressBar ýn baþlangýç deðeri 0 olarak ayarlanmýþtýr.
-         */
-        i_progress_bar_degeri = 0;
+	public void IM_ProgressBarBaslat(View v, String str_test_ismi)
+	{
+		if(v != null && str_test_ismi != null)
+		{
+			/**
+			 * ProgressBar oluþturulmuþtur.
+			 */
+			progress_dialog = new ProgressDialog(v.getContext());
+			
+			/**
+			 * ProgressBar yatay olacak þekilde ve mesajý "Loglanýyor ..." olacak þekilde ayarlanmþtýr.
+			 */
+			progress_dialog.setMessage(str_test_ismi + " Loglanýyor ...");
+			progress_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			
+			/**
+			 * ProgressBar ýn alabileceði maksimum ve minimum deðerler belirlenmiþtir.
+			 */
+			progress_dialog.setProgress(0);
+			progress_dialog.setMax(100);
+			
+			/**
+			 * ProgressBar arayüz üzerinde gösterilmiþ ve iptal edilebilirliði false olarak ayarlanmýþtýr.
+			 */
+			progress_dialog.show();
+			progress_dialog.setCancelable(false);
+			
+	        /**
+	         * ProgressBar ýn baþlangýç deðeri 0 olarak ayarlanmýþtýr.
+	         */
+	        i_progress_bar_degeri = 0;
+		}
 	}
 	
 	
@@ -1045,9 +1260,11 @@ public class IM_AnaUygulama extends Activity {
 	 * -->
 	 * 
 	*********************************************************************************************/
-	private BroadcastReceiver PilDurumuSaglayici = new BroadcastReceiver() {
+	private BroadcastReceiver PilDurumuSaglayici = new BroadcastReceiver() 
+	{
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(Context context, Intent intent) 
+		{
 		
 			/**
 			 * pil seviyesi sistemden okunarak deðiþkene aktarýlmýþtýr.
@@ -1108,19 +1325,19 @@ public class IM_AnaUygulama extends Activity {
 		bluetooth_format_hucreleri[3] = "KONUM_X";
 		bluetooth_format_hucreleri[4] = "KONUM_Y";
 		bluetooth_format_hucreleri[5] = "KAT";
-		bluetooth_format_hucreleri[6] = "4C:A5:6D:1D:3C:AB";
-		bluetooth_format_hucreleri[7] = "22:22:EB:ED:16:0F";
-		bluetooth_format_hucreleri[8] = "BC:44:86:F2:C0:00";
-		bluetooth_format_hucreleri[9] = "78:A8:73:5A:C6:FF";
-		bluetooth_format_hucreleri[10] = "E0:B9:A5:F6:2B:E6";
-		bluetooth_format_hucreleri[11] = "XX:XX:XX:XX:XX:XX";
-		bluetooth_format_hucreleri[12] = "XX:XX:XX:XX:XX:XX";
-		bluetooth_format_hucreleri[13] = "XX:XX:XX:XX:XX:XX";
-		bluetooth_format_hucreleri[14] = "XX:XX:XX:XX:XX:XX";
-		bluetooth_format_hucreleri[15] = "XX:XX:XX:XX:XX:XX";
-		bluetooth_format_hucreleri[16] = "XX:XX:XX:XX:XX:XX";
-		bluetooth_format_hucreleri[17] = "XX:XX:XX:XX:XX:XX";
-		bluetooth_format_hucreleri[18] = "PÝL DURUMU";
+		bluetooth_format_hucreleri[6] = "PÝL DURUMU";
+		bluetooth_format_hucreleri[7] = "4C:A5:6D:1D:3C:AB(Furkan-s4Mini)";
+		bluetooth_format_hucreleri[8] = "22:22:EB:ED:16:0F(Fatih-Gio)";
+		bluetooth_format_hucreleri[9] = "BC:44:86:F2:C0:00(Ýnovasyon-s4Mini)";
+		bluetooth_format_hucreleri[10] = "78:A8:73:5A:C6:FF(Furkan-Tablet)";
+		bluetooth_format_hucreleri[11] = "E0:B9:A5:F6:2B:E6(Furkan-Bilgisayar)";
+		bluetooth_format_hucreleri[12] = "XX:XX:XX:XX:XX:XX(SSID)";
+		bluetooth_format_hucreleri[13] = "XX:XX:XX:XX:XX:XX(SSID)";
+		bluetooth_format_hucreleri[14] = "XX:XX:XX:XX:XX:XX(SSID)";
+		bluetooth_format_hucreleri[15] = "XX:XX:XX:XX:XX:XX(SSID)";
+		bluetooth_format_hucreleri[16] = "XX:XX:XX:XX:XX:XX(SSID)";
+		bluetooth_format_hucreleri[17] = "XX:XX:XX:XX:XX:XX(SSID)";
+		bluetooth_format_hucreleri[18] = "XX:XX:XX:XX:XX:XX(SSID)";
 		bluetooth_format_hucreleri[19] = "";
 		for(int i=20;i<100;i++)
 		{
@@ -1142,10 +1359,10 @@ public class IM_AnaUygulama extends Activity {
 		manyetik_alan_format_hucreleri[3] = "KONUM_X";
 		manyetik_alan_format_hucreleri[4] = "KONUM_Y";
 		manyetik_alan_format_hucreleri[5] = "KAT";
-		manyetik_alan_format_hucreleri[6] = "X";
-		manyetik_alan_format_hucreleri[7] = "Y";
-		manyetik_alan_format_hucreleri[8] = "Z";
-		manyetik_alan_format_hucreleri[9] = "PÝL DURUMU";
+		manyetik_alan_format_hucreleri[6] = "PÝL DURUMU";
+		manyetik_alan_format_hucreleri[7] = "X";
+		manyetik_alan_format_hucreleri[8] = "Y";
+		manyetik_alan_format_hucreleri[9] = "Z";
 		for(int i=10;i<100;i++)
 		{
 			manyetik_alan_format_hucreleri[i] = "";
@@ -1166,10 +1383,10 @@ public class IM_AnaUygulama extends Activity {
 		ivmeolcer_format_hucreleri[3] = "KONUM_X";
 		ivmeolcer_format_hucreleri[4] = "KONUM_Y";
 		ivmeolcer_format_hucreleri[5] = "KAT";
-		ivmeolcer_format_hucreleri[6] = "X";
-		ivmeolcer_format_hucreleri[7] = "Y";
-		ivmeolcer_format_hucreleri[8] = "Z";
-		ivmeolcer_format_hucreleri[9] = "PÝL DURUMU";
+		ivmeolcer_format_hucreleri[6] = "PÝL DURUMU";
+		ivmeolcer_format_hucreleri[7] = "X";
+		ivmeolcer_format_hucreleri[8] = "Y";
+		ivmeolcer_format_hucreleri[9] = "Z";
 		for(int i=10;i<100;i++)
 		{
 			ivmeolcer_format_hucreleri[i] = "";
@@ -1200,13 +1417,16 @@ public class IM_AnaUygulama extends Activity {
 	 * -->
 	 * 
 	*********************************************************************************************/
-	public void IM_CheckedTextViewTiklanabilirAyarla() {
+	public void IM_CheckedTextViewTiklanabilirAyarla() 
+	{
 		/**
 		 * WiFi CheckedTextView'i týklanabilir hale getirilmiþtir.
 		 */
-		ctv_wifi.setOnClickListener(new View.OnClickListener() {
+		ctv_wifi.setOnClickListener(new View.OnClickListener() 
+		{
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v) 
+			{
 				// TODO Auto-generated method stub
 				((CheckedTextView) v).toggle();
 			}
@@ -1215,9 +1435,11 @@ public class IM_AnaUygulama extends Activity {
 		/**
 		 * Bluetooth CheckedTextView'i týklanabilir hale getirilmiþtir.
 		 */
-		ctv_bluetooth.setOnClickListener(new View.OnClickListener() {
+		ctv_bluetooth.setOnClickListener(new View.OnClickListener() 
+		{
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v) 
+			{
 				// TODO Auto-generated method stub
 				((CheckedTextView) v).toggle();
 			}
@@ -1226,9 +1448,11 @@ public class IM_AnaUygulama extends Activity {
 		/**
 		 * Manyetik Alan CheckedTextView'i týklanabilir hale getirilmiþtir.
 		 */
-		ctv_manyetik_alan.setOnClickListener(new View.OnClickListener() {
+		ctv_manyetik_alan.setOnClickListener(new View.OnClickListener() 
+		{
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v) 
+			{
 				// TODO Auto-generated method stub
 				((CheckedTextView) v).toggle();
 			}
@@ -1237,9 +1461,11 @@ public class IM_AnaUygulama extends Activity {
 		/**
 		 * Ývmeölçer CheckedTextView'i týklanabilir hale getirilmiþtir.
 		 */
-		ctv_ivmeolcer.setOnClickListener(new View.OnClickListener() {
+		ctv_ivmeolcer.setOnClickListener(new View.OnClickListener() 
+		{
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v) 
+			{
 				// TODO Auto-generated method stub
 				((CheckedTextView) v).toggle();
 			}
