@@ -15,7 +15,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="5dp"
-        android:text="Wifi Testi" />
+        android:text="@string/wifi_testi" />
 
     <!-- Bluetooth Testi -->
 
@@ -29,7 +29,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="5dp"
-        android:text="Bluetooth Testi" />
+        android:text="@string/bluetooth_testi" />
 
     <!-- Manyetik Alan Testi -->
 
@@ -43,7 +43,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="5dp"
-        android:text="Manyetik Alan Testi" />
+        android:text="@string/manyetik_alan_testi" />
 
     <!-- İvmeölçer Testi -->
 
@@ -57,7 +57,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="5dp"
-        android:text="İvmeölçer Testi" />
+        android:text="@string/ivmeolcer_testi" />
 
     <!-- Konum bilgilerinin X, Y, Kat olarak girilebileceği arayüz, tek satır olarak ayarlandı. -->
 
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:gravity="center"
-            android:text="X" />
+            android:text="@string/x_koordinati" />
 
         <EditText
             android:id="@+id/et_x"
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:gravity="center"
-            android:text="Y"/>
+            android:text="@string/y_koordinati"/>
 
         <EditText
             android:id="@+id/et_y"
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:gravity="center"
-            android:text="Kat" />
+            android:text="@string/kat" />
 
         <EditText
             android:id="@+id/et_kat"
@@ -124,6 +124,6 @@
         android:layout_height="wrap_content"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:text="Log Al" />
+        android:text="@string/log_al" />
 
 </LinearLayout>

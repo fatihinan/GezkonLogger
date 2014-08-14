@@ -163,6 +163,14 @@
  * Tarih: 09.08.2014
  * Güncelleme Tarihi: 13.08.2014
  * Versiyon: v2.0
+ * 
+ * 
+ * TELÝF HAKKI:
+ * 
+ * GezkonLogger yazýlýmý Ýnovasyon Mühendislik, Teknoloji Geliþtirme, Danýþmanlýk, San. ve Tic. Ltd. Þti.
+ * tarafýndan geliþtirilmiþ olup her hakký saklýdýr. Ýçerisinde bulunan görsel, metin, kod vb. ögelerin
+ * tamamýnýn veya bir bölümünün kullanýlmasý ve kamuya açýk olan/olmayan fiizksel veya dijital ortamlarda 
+ * paylaþýlmasý/yayýnlanmasý/daðýtýlmasý yasaktýr.
  *
  ******************************************************************************/
 
@@ -205,7 +213,7 @@ public class IM_AnaUygulama extends Activity {
 	/**
 	 * Excel dosyasýna kaydedilecek tarih bilgisi için belirlenen formattýr.
 	 */
-	SimpleDateFormat sdf_tarih = new SimpleDateFormat("yyyy/MM/dd");
+	SimpleDateFormat sdf_tarih = new SimpleDateFormat("yyyy/MM/dd", java.util.Locale.getDefault());
 	
 	/**
 	 * Güncel tarih bilgisinin tutulduðu deðiþkendir.
@@ -215,7 +223,7 @@ public class IM_AnaUygulama extends Activity {
 	/**
 	 * Excel dosyasýna kaydedilecek saat bilgisi için belirlenen formattýr.
 	 */
-	SimpleDateFormat sdf_saat = new SimpleDateFormat("HH:mm:ss");
+	SimpleDateFormat sdf_saat = new SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault());
 	
 	/**
 	 * Güncel saat deðerinin tutulduðu deðiþkendir.

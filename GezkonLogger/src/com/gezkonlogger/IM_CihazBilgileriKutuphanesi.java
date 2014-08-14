@@ -60,6 +60,14 @@
  * Tarih: 11.08.2014
  * Güncelleme Tarihi: 13.08.2014
  * Versiyon: v1.1
+ * 
+ * 
+ * TELÝF HAKKI:
+ * 
+ * GezkonLogger yazýlýmý Ýnovasyon Mühendislik, Teknoloji Geliþtirme, Danýþmanlýk, San. ve Tic. Ltd. Þti.
+ * tarafýndan geliþtirilmiþ olup her hakký saklýdýr. Ýçerisinde bulunan görsel, metin, kod vb. ögelerin
+ * tamamýnýn veya bir bölümünün kullanýlmasý ve kamuya açýk olan/olmayan fiizksel veya dijital ortamlarda 
+ * paylaþýlmasý/yayýnlanmasý/daðýtýlmasý yasaktýr.
  *
  ******************************************************************************/
 

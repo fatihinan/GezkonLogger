@@ -4,5 +4,13 @@
     <string name="app_name">Gezkon Logger</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="wifi_testi">WiFi Testi</string>
+    <string name="bluetooth_testi">Bluetooth Testi</string>
+    <string name="manyetik_alan_testi">Manyetik Alan Testi</string>
+    <string name="ivmeolcer_testi">İvmeölçer Testi</string>
+    <string name="x_koordinati">X</string>
+    <string name="y_koordinati">Y</string>
+    <string name="kat">Kat</string>
+    <string name="log_al">Log Al</string>
 
 </resources>
